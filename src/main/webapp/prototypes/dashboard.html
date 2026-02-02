@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Study-Sync AI</title>
+    <link rel="stylesheet" href="../resources/css/styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo">Study-Sync AI</a>
+            <div class="d-flex align-center gap-4">
+                <select class="form-control" style="width: auto;">
+                    <option>All Subjects</option>
+                    <option>Operating Systems</option>
+                    <option>Data Structures</option>
+                    <option>Database Management</option>
+                </select>
+                <div class="d-flex align-center gap-2">
+                    <span class="text-sm">student1</span>
+                    <button class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Upload Area -->
+        <div class="upload-area mb-4">
+            <div class="text-2xl mb-2">📁</div>
+            <p class="fw-medium mb-2">Drag & drop PDF files here to upload</p>
+            <button class="btn btn-primary">Browse Files</button>
+            <p class="text-muted text-sm mt-2">Max file size: 20MB</p>
+        </div>
+
+        <!-- Documents Section -->
+        <h2 class="text-xl fw-bold mb-4">My Documents</h2>
+
+        <div class="doc-grid">
+            <!-- Document Card 1 -->
+            <div class="card doc-card">
+                <div class="d-flex justify-between align-center mb-2">
+                    <span class="doc-card-icon">📄</span>
+                    <span class="badge badge-success">Indexed</span>
+                </div>
+                <h3 class="doc-card-title">OS_Lecture_01.pdf</h3>
+                <p class="doc-card-meta">25 pages • Jan 20, 2026</p>
+                <div class="doc-card-actions">
+                    <a href="chat.html" class="btn btn-primary" style="flex: 1;">Chat</a>
+                    <a href="flashcards.html" class="btn btn-secondary" style="flex: 1;">Flashcards</a>
+                </div>
+            </div>
+
+            <!-- Document Card 2 -->
+            <div class="card doc-card">
+                <div class="d-flex justify-between align-center mb-2">
+                    <span class="doc-card-icon">📄</span>
+                    <span class="badge badge-warning">Indexing</span>
+                </div>
+                <h3 class="doc-card-title">Process_Scheduling.pdf</h3>
+                <p class="doc-card-meta">18 pages • Jan 22, 2026</p>
+                <div class="doc-card-actions">
+                    <button class="btn btn-primary" style="flex: 1;" disabled>Chat</button>
+                    <button class="btn btn-secondary" style="flex: 1;" disabled>Flashcards</button>
+                </div>
+            </div>
+
+            <!-- Document Card 3 -->
+            <div class="card doc-card">
+                <div class="d-flex justify-between align-center mb-2">
+                    <span class="doc-card-icon">📄</span>
+                    <span class="badge badge-danger">Failed</span>
+                </div>
+                <h3 class="doc-card-title">Corrupted_File.pdf</h3>
+                <p class="doc-card-meta">Error processing file</p>
+                <div class="doc-card-actions">
+                    <button class="btn btn-secondary w-100">Retry Upload</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

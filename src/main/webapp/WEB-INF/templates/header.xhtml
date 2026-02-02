@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <header class="header">
+        <div class="container header-content">
+            <!-- Logo -->
+            <h:link outcome="/pages/dashboard.xhtml" styleClass="logo">
+                Study-Sync AI
+            </h:link>
+
+            <!-- Right side: Subject dropdown + User menu -->
+            <div class="d-flex align-center gap-4">
+                <!-- Subject Dropdown (only if logged in) -->
+                <h:form id="subjectForm" rendered="#{userSession.loggedIn}">
+                    <h:selectOneMenu id="subjectSelector" value="#{dashboardBean.selectedSubjectId}"
+                        styleClass="form-control" style="width: auto; min-width: 180px;">
+                        <f:selectItem itemLabel="All Subjects" itemValue="#{null}" />
+                        <f:selectItems value="#{dashboardBean.subjects}" var="subject" itemLabel="#{subject.name}"
+                            itemValue="#{subject.id}" />
+                        <f:ajax listener="#{dashboardBean.onSubjectChange}" render=":documentList" />
+                    </h:selectOneMenu>
+                </h:form>
+
+                <!-- User Menu -->
+                <h:panelGroup rendered="#{userSession.loggedIn}" styleClass="d-flex align-center gap-2">
+                    <span class="text-sm">#{userSession.username}</span>
+                    <h:form>
+                        <h:commandButton value="Logout" action="#{loginBean.logout}" styleClass="btn btn-secondary" />
+                    </h:form>
+                </h:panelGroup>
+            </div>
+        </div>
+    </header>
+
+</ui:composition>

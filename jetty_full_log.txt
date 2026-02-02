@@ -1,0 +1,543 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< com.studysync:study-sync-frontend >------------------
+[INFO] Building study-sync-frontend 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO] 
+[INFO] >>> jetty:9.4.44.v20210927:run (default-cli) > test-compile @ study-sync-frontend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ study-sync-frontend ---
+[INFO] skip non existing resourceDirectory D:\Study-Sync-AI\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ study-sync-frontend ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ study-sync-frontend ---
+[INFO] skip non existing resourceDirectory D:\Study-Sync-AI\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ study-sync-frontend ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< jetty:9.4.44.v20210927:run (default-cli) < test-compile @ study-sync-frontend <<<
+[INFO] 
+[INFO] 
+[INFO] --- jetty:9.4.44.v20210927:run (default-cli) @ study-sync-frontend ---
+[INFO] Logging initialized @3665ms to org.eclipse.jetty.util.log.Slf4jLog
+[INFO] webAppSourceDirectory not set. Trying src\main\webapp
+[INFO] Reload Mechanic: automatic
+[INFO] nonBlocking:false
+[INFO] Classes = D:\Study-Sync-AI\target\classes
+[INFO] Configuring Jetty for project: study-sync-frontend
+[INFO] Context path = /
+[INFO] Tmp directory = D:\Study-Sync-AI\target\tmp
+[INFO] Web defaults = org/eclipse/jetty/webapp/webdefault.xml
+[INFO] Web overrides =  none
+[INFO] web.xml file = file:///D:/Study-Sync-AI/src/main/webapp/WEB-INF/web.xml
+[INFO] Webapp directory = D:\Study-Sync-AI\src\main\webapp
+[INFO] jetty-9.4.44.v20210927; built: 2021-09-27T23:02:44.612Z; git: 8da83308eeca865e495e53ef315a249d63ba9332; jvm 22.0.2+9-70
+[WARNING] org.apache.taglibs.standard.Version scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/Version.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/Version.class
+[WARNING] org.apache.taglibs.standard.functions.Functions scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/functions/Functions.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/functions/Functions.class
+[WARNING] org.apache.taglibs.standard.resources.Resources scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/resources/Resources.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/resources/Resources.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.CatchTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/CatchTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/CatchTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ChooseTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ChooseTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ChooseTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.DeclareTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/DeclareTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/DeclareTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ForEachSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ForEachSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ForEachSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ForTokensSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ForTokensSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ForTokensSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ImportSupport$ImportResponseWrapper$1 scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport$ImportResponseWrapper$1.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport$ImportResponseWrapper$1.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ImportSupport$ImportResponseWrapper scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport$ImportResponseWrapper.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport$ImportResponseWrapper.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ImportSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ImportSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.NullAttributeException scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/NullAttributeException.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/NullAttributeException.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.OtherwiseTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/OtherwiseTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/OtherwiseTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.OutSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/OutSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/OutSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ParamParent scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ParamParent.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ParamParent.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ParamSupport$ParamManager scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ParamSupport$ParamManager.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ParamSupport$ParamManager.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.ParamSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/ParamSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/ParamSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.RedirectSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/RedirectSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/RedirectSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.RemoveTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/RemoveTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/RemoveTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.SetSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/SetSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/SetSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.UrlSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/UrlSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/UrlSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.Util scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/Util.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/Util.class
+[WARNING] org.apache.taglibs.standard.tag.common.core.WhenTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/core/WhenTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/core/WhenTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.BundleSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/BundleSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/BundleSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.FormatDateSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/FormatDateSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/FormatDateSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.FormatNumberSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/FormatNumberSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/FormatNumberSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.MessageSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/MessageSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/MessageSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.ParamSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/ParamSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/ParamSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.ParseDateSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/ParseDateSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/ParseDateSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.ParseNumberSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/ParseNumberSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/ParseNumberSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.RequestEncodingSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/RequestEncodingSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/RequestEncodingSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.SetBundleSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/SetBundleSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/SetBundleSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.SetLocaleSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/SetLocaleSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/SetLocaleSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.SetTimeZoneSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/SetTimeZoneSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/SetTimeZoneSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.fmt.TimeZoneSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/fmt/TimeZoneSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/fmt/TimeZoneSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.DataSourceUtil scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/DataSourceUtil.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/DataSourceUtil.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.DataSourceWrapper scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/DataSourceWrapper.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/DataSourceWrapper.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.DateParamTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/DateParamTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/DateParamTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.ParamTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/ParamTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/ParamTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.QueryTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/QueryTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/QueryTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.ResultImpl scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/ResultImpl.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/ResultImpl.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.SetDataSourceTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/SetDataSourceTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/SetDataSourceTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.TransactionTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/TransactionTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/TransactionTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.sql.UpdateTagSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/sql/UpdateTagSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/sql/UpdateTagSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.ExprSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/ExprSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/ExprSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.ForEachTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/ForEachTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/ForEachTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.IfTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/IfTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/IfTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.ParamSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/ParamSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/ParamSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.ParseSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/ParseSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/ParseSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.SetTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/SetTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/SetTag.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.TransformSupport scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/TransformSupport.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/TransformSupport.class
+[WARNING] org.apache.taglibs.standard.tag.common.xml.WhenTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/common/xml/WhenTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/common/xml/WhenTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.ForEachTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/ForEachTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/ForEachTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.ForTokensTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/ForTokensTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/ForTokensTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.IfTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/IfTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/IfTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.ImportTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/ImportTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/ImportTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.OutTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/OutTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/OutTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.ParamTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/ParamTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/ParamTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.RedirectTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/RedirectTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/RedirectTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.SetTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/SetTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/SetTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.UrlTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/UrlTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/UrlTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.core.WhenTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/core/WhenTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/core/WhenTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.BundleTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/BundleTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/BundleTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.FormatDateTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/FormatDateTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/FormatDateTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.FormatNumberTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/FormatNumberTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/FormatNumberTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.MessageTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/MessageTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/MessageTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.ParamTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParamTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParamTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.ParseDateTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParseDateTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParseDateTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.ParseNumberTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParseNumberTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/ParseNumberTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.RequestEncodingTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/RequestEncodingTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/RequestEncodingTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.SetBundleTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetBundleTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetBundleTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.SetLocaleTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetLocaleTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetLocaleTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.SetTimeZoneTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetTimeZoneTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/SetTimeZoneTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.fmt.TimeZoneTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/fmt/TimeZoneTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/fmt/TimeZoneTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.DateParamTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/DateParamTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/DateParamTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.ParamTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/ParamTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/ParamTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.QueryTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/QueryTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/QueryTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.SetDataSourceTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/SetDataSourceTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/SetDataSourceTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.TransactionTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/TransactionTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/TransactionTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.sql.UpdateTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/sql/UpdateTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/sql/UpdateTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.xml.ExprTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/xml/ExprTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/xml/ExprTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.xml.ParamTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/xml/ParamTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/xml/ParamTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.xml.ParseTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/xml/ParseTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/xml/ParseTag.class
+[WARNING] org.apache.taglibs.standard.tag.rt.xml.TransformTag scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tag/rt/xml/TransformTag.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tag/rt/xml/TransformTag.class
+[WARNING] org.apache.taglibs.standard.tei.DeclareTEI scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/DeclareTEI.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/DeclareTEI.class
+[WARNING] org.apache.taglibs.standard.tei.ForEachTEI scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/ForEachTEI.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/ForEachTEI.class
+[WARNING] org.apache.taglibs.standard.tei.ImportTEI scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/ImportTEI.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/ImportTEI.class
+[WARNING] org.apache.taglibs.standard.tei.Util scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/Util.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/Util.class
+[WARNING] org.apache.taglibs.standard.tei.XmlParseTEI scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/XmlParseTEI.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/XmlParseTEI.class
+[WARNING] org.apache.taglibs.standard.tei.XmlTransformTEI scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tei/XmlTransformTEI.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tei/XmlTransformTEI.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlBaseTLV scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlBaseTLV.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlBaseTLV.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlCoreTLV$1 scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV$1.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV$1.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlCoreTLV$Handler scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV$Handler.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV$Handler.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlCoreTLV scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlCoreTLV.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlFmtTLV$1 scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV$1.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV$1.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlFmtTLV$Handler scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV$Handler.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV$Handler.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlFmtTLV scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlFmtTLV.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlSqlTLV$1 scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV$1.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV$1.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlSqlTLV$Handler scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV$Handler.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV$Handler.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlSqlTLV scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlSqlTLV.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlXmlTLV$1 scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV$1.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV$1.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlXmlTLV$Handler scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV$Handler.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV$Handler.class
+[WARNING] org.apache.taglibs.standard.tlv.JstlXmlTLV scanned from multiple locations: jar:file:///C:/Users/dell/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5/taglibs-standard-impl-1.2.5.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV.class, jar:file:///C:/Users/dell/.m2/repository/javax/servlet/jstl/1.2/jstl-1.2.jar!/org/apache/taglibs/standard/tlv/JstlXmlTLV.class
+[INFO] Scanning elapsed time=170ms
+[INFO] DefaultSessionIdManager workerName=node0
+[INFO] No SessionScavenger set, using defaults
+[INFO] node0 Scavenging every 600000ms
+mvn : Feb 02, 2026 9:15:41 
+PM com.sun.faces.config.Con
+figureListener 
+contextInitialized
+At line:1 char:1
++ mvn jetty:run 2>&1 | 
+Out-File -FilePath 
+jetty_full_log.txt 
+-Encoding  ...
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Feb  
+   02, 2026 9:...textIni   
+ tialized:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+INFO: Initializing Mojarra 
+2.3.9 ( 20190401-1936 77894
+020e94a338c9701619b7ef6e987
+1c5a9079) for context ''
+Feb 02, 2026 9:15:41 PM com
+.sun.faces.spi.InjectionPro
+viderFactory createInstance
+INFO: JSF1048: 
+PostConstruct/PreDestroy 
+annotations present.  
+ManagedBeans methods 
+marked with these 
+annotations will have said 
+annotations processed.
+Feb 02, 2026 9:15:42 PM com
+.sun.faces.config.Configure
+Listener$WebConfigResourceM
+onitor$Monitor <init>
+INFO: Monitoring file:/D:/S
+tudy-Sync-AI/src/main/webap
+p/WEB-INF/faces-config.xml 
+for modifications
+Feb 02, 2026 9:15:42 PM com
+.sun.faces.config.Configure
+Listener contextInitialized
+SEVERE: Critical error 
+during deployment: 
+javax.faces.FacesException:
+ Unable to find CDI 
+BeanManager
+	at com.sun.faces.el.ELUtil
+s.tryAddCDIELResolver(ELUti
+ls.java:312)
+	at com.sun.faces.el.ELUtil
+s.buildFacesResolver(ELUtil
+s.java:242)
+	at com.sun.faces.applicati
+on.ApplicationAssociate.ini
+tializeELResolverChains(App
+licationAssociate.java:503)
+	at com.sun.faces.applicati
+on.ApplicationImpl.performO
+neTimeELInitialization(Appl
+icationImpl.java:1405)
+	at com.sun.faces.applicati
+on.ApplicationImpl.getELRes
+olver(ApplicationImpl.java:
+529)
+	at com.sun.faces.config.Co
+nfigureListener.contextInit
+ialized(ConfigureListener.j
+ava:256)
+	at org.eclipse.jetty.serve
+r.handler.ContextHandler.ca
+llContextInitialized(Contex
+tHandler.java:1067)
+	at org.eclipse.jetty.servl
+et.ServletContextHandler.ca
+llContextInitialized(Servle
+tContextHandler.java:572)
+	at org.eclipse.jetty.serve
+r.handler.ContextHandler.co
+ntextInitialized(ContextHan
+dler.java:996)
+	at org.eclipse.jetty.servl
+et.ServletHandler.initializ
+e(ServletHandler.java:746)
+	at org.eclipse.jetty.servl
+et.ServletContextHandler.st
+artContext(ServletContextHa
+ndler.java:379)
+	at org.eclipse.jetty.webap
+p.WebAppContext.startWebapp
+(WebAppContext.java:1449)
+	at org.eclipse.jetty.maven
+.plugin.JettyWebAppContext.
+startWebapp(JettyWebAppCont
+ext.java:328)
+	at org.eclipse.jetty.webap
+p.WebAppContext.startContex
+t(WebAppContext.java:1414)
+	at org.eclipse.jetty.serve
+r.handler.ContextHandler.do
+Start(ContextHandler.java:9
+10)
+	at org.eclipse.jetty.servl
+et.ServletContextHandler.do
+Start(ServletContextHandler
+.java:288)
+	at org.eclipse.jetty.webap
+p.WebAppContext.doStart(Web
+AppContext.java:524)
+	at org.eclipse.jetty.maven
+.plugin.JettyWebAppContext.
+doStart(JettyWebAppContext.
+java:397)
+	at org.eclipse.jetty.util.
+component.AbstractLifeCycle
+.start(AbstractLifeCycle.ja
+va:73)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.start(ContainerLifeCycle.
+java:169)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.doStart(ContainerLifeCycl
+e.java:117)
+	at org.eclipse.jetty.serve
+r.handler.AbstractHandler.d
+oStart(AbstractHandler.java
+:97)
+	at org.eclipse.jetty.util.
+component.AbstractLifeCycle
+.start(AbstractLifeCycle.ja
+va:73)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.start(ContainerLifeCycle.
+java:169)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.doStart(ContainerLifeCycl
+e.java:117)
+	at org.eclipse.jetty.serve
+r.handler.AbstractHandler.d
+oStart(AbstractHandler.java
+:97)
+	at org.eclipse.jetty.util.
+component.AbstractLifeCycle
+.start(AbstractLifeCycle.ja
+va:73)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.start(ContainerLifeCycle.
+java:169)
+	at org.eclipse.jetty.serve
+r.Server.start(Server.java:
+423)
+	at org.eclipse.jetty.util.
+component.ContainerLifeCycl
+e.doStart(ContainerLifeCycl
+e.java:110)
+	at org.eclipse.jetty.serve
+r.handler.AbstractHandler.d
+oStart(AbstractHandler.java
+:97)
+	at org.eclipse.jetty.serve
+r.Server.doStart(Server.jav
+a:387)
+	at org.eclipse.jetty.util.
+component.AbstractLifeCycle
+.start(AbstractLifeCycle.ja
+va:73)
+	at org.eclipse.jetty.maven
+.plugin.AbstractJettyMojo.s
+tartJetty(AbstractJettyMojo
+.java:449)
+	at org.eclipse.jetty.maven
+.plugin.AbstractJettyMojo.e
+xecute(AbstractJettyMojo.ja
+va:310)
+	at org.eclipse.jetty.maven
+.plugin.JettyRunMojo.execut
+e(JettyRunMojo.java:150)
+	at org.apache.maven.plugin
+.DefaultBuildPluginManager.
+executeMojo(DefaultBuildPlu
+ginManager.java:126)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.d
+oExecute2(MojoExecutor.java
+:328)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.d
+oExecute(MojoExecutor.java:
+316)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.e
+xecute(MojoExecutor.java:21
+2)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.e
+xecute(MojoExecutor.java:17
+4)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.a
+ccess$000(MojoExecutor.java
+:75)
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor$1
+.run(MojoExecutor.java:162)
+	at org.apache.maven.plugin
+.DefaultMojosExecutionStrat
+egy.execute(DefaultMojosExe
+cutionStrategy.java:39)
+[WARNING] Failed startup of context o.e.j.m.p.JettyWebAppContext@45e6d1e0{Study-Sync AI,/,[file:///D:/Study-Sync-AI/src/main/webapp/, jar:file:///C:/Users/dell/.m2/repository/org/glassfish/javax.faces/2.3.9/javax.faces-2.3.9.jar!/META-INF/resources],UNAVAILABLE}{file:///D:/Study-Sync-AI/src/main/webapp/}
+	at org.apache.maven.lifecy
+cle.internal.MojoExecutor.e
+xecute(MojoExecutor.java:15
+9)
+	at org.apache.maven.lifecy
+cle.internal.LifecycleModul
+eBuilder.buildProject(Lifec
+ycleModuleBuilder.java:105)
+	at org.apache.maven.lifecy
+cle.internal.LifecycleModul
+eBuilder.buildProject(Lifec
+ycleModuleBuilder.java:73)
+	at org.apache.maven.lifecy
+cle.internal.builder.single
+threaded.SingleThreadedBuil
+der.build(SingleThreadedBui
+lder.java:53)
+	at org.apache.maven.lifecy
+cle.internal.LifecycleStart
+er.execute(LifecycleStarter
+.java:118)
+	at org.apache.maven.Defaul
+tMaven.doExecute(DefaultMav
+en.java:261)
+	at org.apache.maven.Defaul
+tMaven.doExecute(DefaultMav
+en.java:173)
+	at org.apache.maven.Defaul
+tMaven.execute(DefaultMaven
+.java:101)
+	at org.apache.maven.cli.Ma
+venCli.execute(MavenCli.jav
+a:919)
+	at org.apache.maven.cli.Ma
+venCli.doMain(MavenCli.java
+:285)
+	at org.apache.maven.cli.Ma
+venCli.main(MavenCli.java:2
+07)
+	at java.base/jdk.internal.
+reflect.DirectMethodHandleA
+ccessor.invoke(DirectMethod
+HandleAccessor.java:103)
+	at java.base/java.lang.ref
+lect.Method.invoke(Method.j
+ava:580)
+	at org.codehaus.plexus.cla
+ssworlds.launcher.Launcher.
+launchEnhanced(Launcher.jav
+a:255)
+	at org.codehaus.plexus.cla
+ssworlds.launcher.Launcher.
+launch(Launcher.java:201)
+	at org.codehaus.plexus.cla
+ssworlds.launcher.Launcher.
+mainWithExitCode(Launcher.j
+ava:361)
+	at org.codehaus.plexus.cla
+ssworlds.launcher.Launcher.
+main(Launcher.java:314)
+
+java.lang.RuntimeException: javax.faces.FacesException: Unable to find CDI BeanManager
+    at com.sun.faces.config.ConfigureListener.contextInitialized (ConfigureListener.java:315)
+    at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized (ContextHandler.java:1067)
+    at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized (ServletContextHandler.java:572)
+    at org.eclipse.jetty.server.handler.ContextHandler.contextInitialized (ContextHandler.java:996)
+    at org.eclipse.jetty.servlet.ServletHandler.initialize (ServletHandler.java:746)
+    at org.eclipse.jetty.servlet.ServletContextHandler.startContext (ServletContextHandler.java:379)
+    at org.eclipse.jetty.webapp.WebAppContext.startWebapp (WebAppContext.java:1449)
+    at org.eclipse.jetty.maven.plugin.JettyWebAppContext.startWebapp (JettyWebAppContext.java:328)
+    at org.eclipse.jetty.webapp.WebAppContext.startContext (WebAppContext.java:1414)
+    at org.eclipse.jetty.server.handler.ContextHandler.doStart (ContextHandler.java:910)
+    at org.eclipse.jetty.servlet.ServletContextHandler.doStart (ServletContextHandler.java:288)
+    at org.eclipse.jetty.webapp.WebAppContext.doStart (WebAppContext.java:524)
+    at org.eclipse.jetty.maven.plugin.JettyWebAppContext.doStart (JettyWebAppContext.java:397)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:117)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:117)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.server.Server.start (Server.java:423)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:110)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.server.Server.doStart (Server.java:387)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.maven.plugin.AbstractJettyMojo.startJetty (AbstractJettyMojo.java:449)
+    at org.eclipse.jetty.maven.plugin.AbstractJettyMojo.execute (AbstractJettyMojo.java:310)
+    at org.eclipse.jetty.maven.plugin.JettyRunMojo.execute (JettyRunMojo.java:150)
+    at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:126)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2 (MojoExecutor.java:328)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute (MojoExecutor.java:316)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:212)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:174)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.access$000 (MojoExecutor.java:75)
+    at org.apache.maven.lifecycle.internal.MojoExecutor$1.run (MojoExecutor.java:162)
+    at org.apache.maven.plugin.DefaultMojosExecutionStrategy.execute (DefaultMojosExecutionStrategy.java:39)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:159)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:105)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:73)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:53)
+    at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:118)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:261)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:173)
+    at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:101)
+    at org.apache.maven.cli.MavenCli.execute (MavenCli.java:919)
+    at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:285)
+    at org.apache.maven.cli.MavenCli.main (MavenCli.java:207)
+    at jdk.internal.reflect.DirectMethodHandleAccessor.invoke (DirectMethodHandleAccessor.java:103)
+    at java.lang.reflect.Method.invoke (Method.java:580)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:255)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:201)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:361)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:314)
+Caused by: javax.faces.FacesException: Unable to find CDI BeanManager
+    at com.sun.faces.el.ELUtils.tryAddCDIELResolver (ELUtils.java:312)
+    at com.sun.faces.el.ELUtils.buildFacesResolver (ELUtils.java:242)
+    at com.sun.faces.application.ApplicationAssociate.initializeELResolverChains (ApplicationAssociate.java:503)
+    at com.sun.faces.application.ApplicationImpl.performOneTimeELInitialization (ApplicationImpl.java:1405)
+    at com.sun.faces.application.ApplicationImpl.getELResolver (ApplicationImpl.java:529)
+    at com.sun.faces.config.ConfigureListener.contextInitialized (ConfigureListener.java:256)
+    at org.eclipse.jetty.server.handler.ContextHandler.callContextInitialized (ContextHandler.java:1067)
+    at org.eclipse.jetty.servlet.ServletContextHandler.callContextInitialized (ServletContextHandler.java:572)
+    at org.eclipse.jetty.server.handler.ContextHandler.contextInitialized (ContextHandler.java:996)
+    at org.eclipse.jetty.servlet.ServletHandler.initialize (ServletHandler.java:746)
+    at org.eclipse.jetty.servlet.ServletContextHandler.startContext (ServletContextHandler.java:379)
+    at org.eclipse.jetty.webapp.WebAppContext.startWebapp (WebAppContext.java:1449)
+    at org.eclipse.jetty.maven.plugin.JettyWebAppContext.startWebapp (JettyWebAppContext.java:328)
+    at org.eclipse.jetty.webapp.WebAppContext.startContext (WebAppContext.java:1414)
+    at org.eclipse.jetty.server.handler.ContextHandler.doStart (ContextHandler.java:910)
+    at org.eclipse.jetty.servlet.ServletContextHandler.doStart (ServletContextHandler.java:288)
+    at org.eclipse.jetty.webapp.WebAppContext.doStart (WebAppContext.java:524)
+    at org.eclipse.jetty.maven.plugin.JettyWebAppContext.doStart (JettyWebAppContext.java:397)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:117)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:117)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.start (ContainerLifeCycle.java:169)
+    at org.eclipse.jetty.server.Server.start (Server.java:423)
+    at org.eclipse.jetty.util.component.ContainerLifeCycle.doStart (ContainerLifeCycle.java:110)
+    at org.eclipse.jetty.server.handler.AbstractHandler.doStart (AbstractHandler.java:97)
+    at org.eclipse.jetty.server.Server.doStart (Server.java:387)
+    at org.eclipse.jetty.util.component.AbstractLifeCycle.start (AbstractLifeCycle.java:73)
+    at org.eclipse.jetty.maven.plugin.AbstractJettyMojo.startJetty (AbstractJettyMojo.java:449)
+    at org.eclipse.jetty.maven.plugin.AbstractJettyMojo.execute (AbstractJettyMojo.java:310)
+    at org.eclipse.jetty.maven.plugin.JettyRunMojo.execute (JettyRunMojo.java:150)
+    at org.apache.maven.plugin.DefaultBuildPluginManager.executeMojo (DefaultBuildPluginManager.java:126)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute2 (MojoExecutor.java:328)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.doExecute (MojoExecutor.java:316)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:212)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:174)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.access$000 (MojoExecutor.java:75)
+    at org.apache.maven.lifecycle.internal.MojoExecutor$1.run (MojoExecutor.java:162)
+    at org.apache.maven.plugin.DefaultMojosExecutionStrategy.execute (DefaultMojosExecutionStrategy.java:39)
+    at org.apache.maven.lifecycle.internal.MojoExecutor.execute (MojoExecutor.java:159)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:105)
+    at org.apache.maven.lifecycle.internal.LifecycleModuleBuilder.buildProject (LifecycleModuleBuilder.java:73)
+    at org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder.build (SingleThreadedBuilder.java:53)
+    at org.apache.maven.lifecycle.internal.LifecycleStarter.execute (LifecycleStarter.java:118)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:261)
+    at org.apache.maven.DefaultMaven.doExecute (DefaultMaven.java:173)
+    at org.apache.maven.DefaultMaven.execute (DefaultMaven.java:101)
+    at org.apache.maven.cli.MavenCli.execute (MavenCli.java:919)
+    at org.apache.maven.cli.MavenCli.doMain (MavenCli.java:285)
+    at org.apache.maven.cli.MavenCli.main (MavenCli.java:207)
+    at jdk.internal.reflect.DirectMethodHandleAccessor.invoke (DirectMethodHandleAccessor.java:103)
+    at java.lang.reflect.Method.invoke (Method.java:580)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launchEnhanced (Launcher.java:255)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.launch (Launcher.java:201)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.mainWithExitCode (Launcher.java:361)
+    at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:314)
+[INFO] Started ServerConnector@778c2e7c{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
+[INFO] Started @5570ms
+[INFO] Started Jetty Server

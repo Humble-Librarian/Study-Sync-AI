@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">Dashboard - Study-Sync AI</ui:define>
+
+    <ui:define name="content">
+        <!-- Upload Component -->
+        <ui:include src="/components/upload-component.xhtml" />
+
+        <!-- Documents Section -->
+        <h2 class="text-xl fw-bold mb-4">My Documents</h2>
+
+        <h:form id="documentsForm">
+            <div class="doc-grid">
+                <ui:repeat value="#{dashboardBean.documents}" var="doc">
+                    <div class="card doc-card">
+                        <div class="d-flex justify-between align-center mb-2">
+                            <span class="doc-card-icon">📄</span>
+                            <span
+                                class="badge badge-#{doc.status eq 'indexed' ? 'success' : (doc.status eq 'indexing' ? 'warning' : 'danger')}">
+                                #{doc.status}
+                            </span>
+                        </div>
+                        <h3 class="doc-card-title">#{doc.name}</h3>
+                        <p class="doc-card-meta">
+                            #{doc.pages > 0 ? doc.pages : 'Error'}
+                            #{doc.pages > 0 ? 'pages' : ''}
+                            • #{doc.date}
+                        </p>
+                        <div class="doc-card-actions">
+                            <h:link outcome="/pages/chat.xhtml" styleClass="btn btn-primary" style="flex: 1;"
+                                disabled="#{!doc.ready}">
+                                <f:param name="docId" value="#{doc.id}" />
+                                Chat
+                            </h:link>
+                            <h:link outcome="/pages/flashcards.xhtml" styleClass="btn btn-secondary" style="flex: 1;"
+                                disabled="#{!doc.ready}">
+                                <f:param name="docId" value="#{doc.id}" />
+                                Flashcards
+                            </h:link>
+                        </div>
+                    </div>
+                </ui:repeat>
+            </div>
+
+            <!-- Empty State -->
+            <h:panelGroup rendered="#{empty dashboardBean.documents}">
+                <div class="text-center py-4 text-muted">
+                    <p>No documents found. Upload a PDF to get started!</p>
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <h:outputScript name="js/upload.js" />
+    </ui:define>
+</ui:composition>
+
+</html>

@@ -1,0 +1,98 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="upload-area" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+        ondrop="handleDrop(event)">
+
+        <h:form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-content">
+                <!-- Upload Icon -->
+                <div class="upload-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z" />
+                        <path
+                            d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z" />
+                    </svg>
+                </div>
+
+                <h5 class="fw-bold mb-2">Drag &amp; drop PDF here</h5>
+                <p class="text-muted text-sm mb-4">or click to browse</p>
+
+                <!-- Hidden File Input -->
+                <h:inputFile id="fileInput" value="#{uploadBean.file}" styleClass="d-none"
+                    onchange="validateFile(this)" />
+
+                <h:outputLabel for="fileInput" styleClass="btn btn-primary">
+                    Browse Files
+                </h:outputLabel>
+
+                <p class="text-muted text-sm mt-2">Max file size: 20MB</p>
+
+                <!-- File Info (Hidden until file selected) -->
+                <div class="file-info mt-4 p-4" style="display: none;">
+                    <p class="fw-bold mb-1" id="fileName"></p>
+                    <small class="text-muted" id="fileSize"></small>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container mt-4" style="display: none;">
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                    </div>
+                    <p class="text-sm text-muted mt-2">Uploading...</p>
+                </div>
+
+                <!-- Upload Button (Hidden until file selected) -->
+                <h:commandButton id="uploadBtn" value="Upload Document" action="#{uploadBean.upload}"
+                    styleClass="btn btn-primary mt-4" style="display: none;" onclick="simulateProgress()" />
+
+                <!-- Success/Error Messages -->
+                <h:messages for="uploadForm" styleClass="alert mt-4" />
+            </div>
+        </h:form>
+    </div>
+
+    <style>
+        .upload-area {
+            border: 2px dashed var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--space-8);
+            text-align: center;
+            background-color: var(--bg-secondary);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-area.drag-over {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .upload-icon {
+            color: var(--primary);
+            margin-bottom: var(--space-4);
+        }
+
+        .file-info {
+            background-color: var(--bg-primary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: var(--gray-200);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.2s;
+        }
+    </style>
+</ui:composition>

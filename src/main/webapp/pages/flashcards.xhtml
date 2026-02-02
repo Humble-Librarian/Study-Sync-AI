@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">Flashcards - Study-Sync AI</ui:define>
+
+    <ui:define name="styles">
+        <h:outputStylesheet name="css/flashcards.css" />
+    </ui:define>
+
+    <ui:define name="content">
+        <!-- Page Header -->
+        <div class="d-flex justify-between align-center mb-4">
+            <div>
+                <h:link outcome="/pages/dashboard.xhtml" styleClass="text-muted text-sm" style="text-decoration: none;">
+                    ← Back to Dashboard
+                </h:link>
+                <h2 style="margin: var(--space-2) 0 0 0;">Flashcards: #{flashcardBean.documentName}</h2>
+                <p class="text-muted text-sm">#{flashcardBean.cardCount} cards generated</p>
+            </div>
+
+            <h:form id="regenerateForm">
+                <h:commandButton value="🔄 Regenerate" action="#{flashcardBean.regenerate}"
+                    styleClass="btn btn-secondary">
+                    <f:ajax render="flashcardGrid" />
+                </h:commandButton>
+            </h:form>
+        </div>
+
+        <!-- Flashcard Grid -->
+        <h:panelGroup id="flashcardGrid">
+            <div class="flashcard-grid">
+                <ui:repeat value="#{flashcardBean.flashcards}" var="card">
+                    <ui:include src="/components/flashcard.xhtml">
+                        <ui:param name="question" value="#{card.question}" />
+                        <ui:param name="answer" value="#{card.answer}" />
+                        <ui:param name="difficulty" value="#{card.difficulty}" />
+                        <ui:param name="difficultyClass" value="#{card.difficultyClass}" />
+                    </ui:include>
+                </ui:repeat>
+            </div>
+
+            <!-- Empty State -->
+            <h:panelGroup rendered="#{empty flashcardBean.flashcards}">
+                <div class="text-center py-4">
+                    <p class="text-muted">No flashcards generated yet. Click Regenerate to create some!</p>
+                </div>
+            </h:panelGroup>
+        </h:panelGroup>
+
+        <!-- Keyboard Instructions -->
+        <div class="text-center mt-4 p-4" style="background: var(--bg-tertiary); border-radius: var(--radius-md);">
+            <p class="text-sm text-muted mb-0">
+                <strong>Keyboard Navigation:</strong> Use Tab to navigate between cards,
+                Enter or Space to flip
+            </p>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>

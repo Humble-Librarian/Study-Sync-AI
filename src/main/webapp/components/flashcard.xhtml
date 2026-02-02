@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <div class="flashcard" tabindex="0" onclick="this.classList.toggle('flipped')"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('flipped');}"
+        role="button" aria-label="Flashcard: #{question}">
+
+        <div class="flashcard-inner">
+            <!-- Front Side -->
+            <div class="flashcard-front">
+                <span class="badge #{difficultyClass} flashcard-badge">
+                    #{difficulty}
+                </span>
+
+                <p class="flashcard-label">QUESTION</p>
+                <h3 class="flashcard-question">#{question}</h3>
+
+                <p class="flashcard-hint">Click or press Enter to flip</p>
+            </div>
+
+            <!-- Back Side -->
+            <div class="flashcard-back">
+                <p class="flashcard-label">ANSWER</p>
+                <p class="flashcard-answer">#{answer}</p>
+
+                <p class="flashcard-hint">Click to flip back</p>
+            </div>
+        </div>
+    </div>
+
+</ui:composition>
