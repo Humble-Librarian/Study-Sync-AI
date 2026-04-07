@@ -493,6 +493,12 @@ a:hover {
     background: radial-gradient(circle at 50% 50%, var(--accent-dim), transparent 70%);
     opacity: 0;
     transition: opacity var(--transition-base);
+    pointer-events: none;
+}
+
+.upload-area > * {
+    position: relative;
+    z-index: 1;
 }
 
 .upload-area:hover,

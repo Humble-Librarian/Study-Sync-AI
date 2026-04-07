@@ -1,5 +1,7 @@
 package com.studysync.beans;
 
+import com.studysync.services.ConfigService;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -13,6 +15,9 @@ public class LoginBean {
     @ManagedProperty(value = "#{userSession}")
     private UserSession userSession;
 
+    @ManagedProperty(value = "#{configService}")
+    private ConfigService configService;
+
     private String username;
     private String password;
 
@@ -22,6 +27,11 @@ public class LoginBean {
                 && password != null && !password.trim().isEmpty()) {
 
             userSession.login(username, username.hashCode());
+
+            // First-time flow: force setup until shared path is configured.
+            if (configService == null || !configService.isPathConfigured()) {
+                return "/pages/setup.xhtml?faces-redirect=true";
+            }
             return "/pages/dashboard.xhtml?faces-redirect=true";
         }
 
@@ -60,5 +70,13 @@ public class LoginBean {
 
     public void setUserSession(UserSession userSession) {
         this.userSession = userSession;
+    }
+
+    public ConfigService getConfigService() {
+        return configService;
+    }
+
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
     }
 }

@@ -6,6 +6,15 @@
     <ui:define name="title">Dashboard - Study-Sync AI</ui:define>
 
     <ui:define name="content">
+        <h:panelGroup rendered="#{!dashboardBean.configured}">
+            <div class="alert alert-warning mb-4">
+                #{dashboardBean.setupMessage}
+                <h:link outcome="/pages/setup.xhtml" styleClass="btn btn-secondary ms-2">
+                    Configure Folder
+                </h:link>
+            </div>
+        </h:panelGroup>
+
         <!-- Upload Component -->
         <ui:include src="/components/upload-component.xhtml" />
 
@@ -13,33 +22,41 @@
         <h2 class="text-xl fw-bold mb-4">My Documents</h2>
 
         <h:form id="documentsForm">
+            <h:messages globalOnly="true" styleClass="alert mb-4" />
+
             <div class="doc-grid">
                 <ui:repeat value="#{dashboardBean.documents}" var="doc">
                     <div class="card doc-card">
                         <div class="d-flex justify-between align-center mb-2">
                             <span class="doc-card-icon">📄</span>
                             <span
-                                class="badge badge-#{doc.status eq 'indexed' ? 'success' : (doc.status eq 'indexing' ? 'warning' : 'danger')}">
+                                class="badge badge-#{doc.status eq 'indexed' ? 'success' : (doc.status eq 'uploaded' ? 'warning' : 'danger')}">
                                 #{doc.status}
                             </span>
                         </div>
                         <h3 class="doc-card-title">#{doc.name}</h3>
                         <p class="doc-card-meta">
-                            #{doc.pages > 0 ? doc.pages : 'Error'}
+                            #{doc.pages > 0 ? doc.pages : (doc.status eq 'uploaded' ? 'Pending index' : 'Error')}
                             #{doc.pages > 0 ? 'pages' : ''}
                             • #{doc.date}
                         </p>
                         <div class="doc-card-actions">
                             <h:link outcome="/pages/chat.xhtml" styleClass="btn btn-primary" style="flex: 1;"
                                 disabled="#{!doc.ready}">
-                                <f:param name="docId" value="#{doc.id}" />
+                                <f:param name="docName" value="#{doc.name}" />
                                 Chat
                             </h:link>
-                            <h:link outcome="/pages/flashcards.xhtml" styleClass="btn btn-secondary" style="flex: 1;"
-                                disabled="#{!doc.ready}">
+                            <h:link outcome="/pages/flashcards.xhtml" styleClass="btn btn-secondary" style="flex: 1;">
                                 <f:param name="docId" value="#{doc.id}" />
+                                <f:param name="docName" value="#{doc.name}" />
                                 Flashcards
                             </h:link>
+                            <h:commandButton value="Delete" action="#{dashboardBean.deleteSelectedDocument}"
+                                styleClass="btn btn-secondary" style="flex: 1; border-color: rgba(255,107,107,0.45); color: #ff9090;"
+                                onclick="return confirm('Delete #{doc.name}? This will also remove cached index.');">
+                                <f:setPropertyActionListener target="#{dashboardBean.pendingDeleteDocName}" value="#{doc.name}" />
+                                <f:param name="docNameToDelete" value="#{doc.name}" />
+                            </h:commandButton>
                         </div>
                     </div>
                 </ui:repeat>

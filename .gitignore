@@ -6,3 +6,9 @@ target/
 *.iml
 .vscode/
 .DS_Store
+.venv/
+.venv_pdf/
+__pycache__/
+*.pyc
+python-backend/.env
+C:/

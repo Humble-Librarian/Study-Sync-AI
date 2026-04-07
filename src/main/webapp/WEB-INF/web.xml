@@ -6,6 +6,32 @@
          version="3.1">
     
     <display-name>Study-Sync AI</display-name>
+
+    <!-- Shared data directory fallback (used before first-time setup is saved) -->
+    <context-param>
+        <param-name>studysync.data.dir</param-name>
+        <param-value>C:/StudySync_Data</param-value>
+    </context-param>
+
+    <!-- Optional JDBC config for persisting app_config in MySQL -->
+    <context-param>
+        <param-name>studysync.db.url</param-name>
+        <param-value></param-value>
+    </context-param>
+    <context-param>
+        <param-name>studysync.db.user</param-name>
+        <param-value></param-value>
+    </context-param>
+    <context-param>
+        <param-name>studysync.db.password</param-name>
+        <param-value></param-value>
+    </context-param>
+
+    <!-- Python backend endpoint -->
+    <context-param>
+        <param-name>studysync.python.backend.url</param-name>
+        <param-value>http://localhost:5000</param-value>
+    </context-param>
     
     <!-- Mojarra JSF ConfigureListener - required for embedded servers -->
     <listener>
@@ -16,6 +42,11 @@
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>20971520</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>0</file-size-threshold>
+        </multipart-config>
         <load-on-startup>1</load-on-startup>
     </servlet>
     

@@ -1,208 +1,74 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <f:metadata>
+        <f:viewParam name="docName" value="#{chatBean.docName}" />
+    </f:metadata>
+
     <ui:define name="title">Chat - Study-Sync AI</ui:define>
 
-    <ui:define name="styles">
-        <style>
-            .chat-page {
-                display: flex;
-                flex-direction: column;
-                height: calc(100vh - 140px);
-            }
-
-            .chat-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: var(--space-4);
-                background: var(--bg-primary);
-                border-bottom: 1px solid var(--border-light);
-                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-            }
-
-            .chat-messages {
-                flex: 1;
-                overflow-y: auto;
-                padding: var(--space-4);
-                background: var(--bg-tertiary);
-            }
-
-            .message {
-                display: flex;
-                margin-bottom: var(--space-4);
-            }
-
-            .message-user {
-                flex-direction: row-reverse;
-            }
-
-            .message-avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                font-size: 0.75rem;
-                flex-shrink: 0;
-            }
-
-            .message-user .message-avatar {
-                background: var(--primary);
-                color: white;
-                margin-left: var(--space-2);
-            }
-
-            .message-ai .message-avatar {
-                background: var(--secondary);
-                color: white;
-                margin-right: var(--space-2);
-            }
-
-            .message-bubble {
-                max-width: 70%;
-                padding: var(--space-3) var(--space-4);
-                border-radius: var(--radius-lg);
-                line-height: 1.5;
-            }
-
-            .message-user .message-bubble {
-                background: var(--primary);
-                color: white;
-                border-bottom-right-radius: var(--radius-sm);
-            }
-
-            .message-ai .message-bubble {
-                background: var(--bg-primary);
-                border: 1px solid var(--border-light);
-                border-bottom-left-radius: var(--radius-sm);
-            }
-
-            .chat-input {
-                display: flex;
-                gap: var(--space-2);
-                padding: var(--space-4);
-                background: var(--bg-primary);
-                border-top: 1px solid var(--border-light);
-                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-            }
-
-            .chat-input .form-control {
-                flex: 1;
-            }
-
-            .viva-toggle {
-                display: flex;
-                align-items: center;
-                gap: var(--space-2);
-            }
-
-            .toggle-switch {
-                position: relative;
-                width: 48px;
-                height: 24px;
-                background: var(--gray-300);
-                border-radius: 24px;
-                cursor: pointer;
-                transition: background 0.3s;
-            }
-
-            .toggle-switch.active {
-                background: var(--info);
-            }
-
-            .toggle-switch::after {
-                content: '';
-                position: absolute;
-                width: 18px;
-                height: 18px;
-                background: white;
-                border-radius: 50%;
-                top: 3px;
-                left: 3px;
-                transition: transform 0.3s;
-            }
-
-            .toggle-switch.active::after {
-                transform: translateX(24px);
-            }
-        </style>
-    </ui:define>
-
     <ui:define name="content">
-        <div class="chat-page">
-            <!-- Chat Header -->
-            <div class="chat-header">
-                <div class="d-flex align-center gap-4">
-                    <h:link outcome="/pages/dashboard.xhtml" styleClass="btn btn-secondary">
-                        ← Back
-                    </h:link>
-                    <h2 style="margin: 0; font-size: 1.125rem;">#{chatBean.documentName}</h2>
+        <div class="card card-glass" style="max-width: 980px; margin: 0 auto;">
+            <div class="d-flex justify-between align-center mb-4">
+                <h:link outcome="/pages/dashboard.xhtml" styleClass="btn btn-secondary">Back</h:link>
+                <h2 class="text-xl fw-bold" style="margin: 0;">#{empty chatBean.docName ? 'Document Chat' : chatBean.docName}</h2>
+            </div>
+
+            <h:form id="chatForm">
+                <h:inputHidden id="docNameHidden" value="#{chatBean.docName}" />
+
+                <h:panelGroup rendered="#{not empty chatBean.errorMessage}">
+                    <div class="alert alert-danger mb-4">#{chatBean.errorMessage}</div>
+                </h:panelGroup>
+
+                <div class="form-group mb-3">
+                    <h:outputLabel for="llmChoice" value="Model Provider" styleClass="form-label"/>
+                    <h:selectOneMenu id="llmChoice" value="#{chatBean.llmChoice}" styleClass="form-control">
+                        <f:selectItem itemLabel="Groq (Llama 3.3)" itemValue="groq"/>
+                        <f:selectItem itemLabel="NVIDIA NIM" itemValue="nim"/>
+                    </h:selectOneMenu>
                 </div>
 
-                <h:form id="vivaForm">
-                    <div class="viva-toggle">
-                        <span class="text-sm text-muted">Viva Mode</span>
-                        <div class="toggle-switch #{chatBean.vivaMode ? 'active' : ''}"
-                            onclick="document.getElementById('vivaForm:vivaBtn').click();">
-                        </div>
-                        <h:commandButton id="vivaBtn" action="#{chatBean.toggleVivaMode}" style="display: none;">
-                            <f:ajax render="@form messagesPanel" />
-                        </h:commandButton>
-                    </div>
-                </h:form>
-            </div>
+                <div class="form-group mb-3">
+                    <h:outputLabel for="topK" value="Top Context Chunks" styleClass="form-label"/>
+                    <h:inputText id="topK" value="#{chatBean.topK}" styleClass="form-control"/>
+                </div>
 
-            <!-- Messages Area -->
-            <div class="chat-messages" id="chatArea">
-                <h:panelGroup id="messagesPanel">
-                    <ui:repeat value="#{chatBean.messages}" var="msg">
-                        <div class="message #{msg.fromUser ? 'message-user' : 'message-ai'}">
-                            <div class="message-avatar">
-                                #{msg.fromUser ? 'U' : 'AI'}
+                <div class="form-group mb-3">
+                    <h:outputLabel for="question" value="Ask a Question" styleClass="form-label"/>
+                    <h:inputTextarea id="question" value="#{chatBean.userQuery}" styleClass="form-control" rows="4"
+                                     placeholder="Type your question about this document..."/>
+                </div>
+
+                <div class="d-flex justify-end mb-4">
+                    <h:commandButton value="Ask StudySync AI" action="#{chatBean.submitQuery}" styleClass="btn btn-primary"/>
+                </div>
+            </h:form>
+
+            <h:panelGroup rendered="#{not empty chatBean.answer}">
+                <div class="card" style="margin-bottom: var(--space-4);">
+                    <h3 class="fw-bold mb-3">Answer</h3>
+                    <p style="white-space: pre-wrap; margin: 0;">#{chatBean.answer}</p>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{chatBean.showSources}">
+                <div class="card">
+                    <h3 class="fw-bold mb-3">Source Pages</h3>
+                    <ui:repeat value="#{chatBean.sourcePages}" var="src">
+                        <div class="mb-3" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-light);">
+                            <div class="d-flex justify-between align-center mb-1">
+                                <strong>Page #{src.page}</strong>
+                                <span class="badge badge-info">Score: #{src.score}</span>
                             </div>
-                            <div class="message-bubble">
-                                <h:outputText value="#{msg.content}" escape="false" />
-                            </div>
+                            <p style="white-space: pre-wrap; margin: 0;">#{src.text}</p>
                         </div>
                     </ui:repeat>
-                </h:panelGroup>
-            </div>
-
-            <!-- Input Area -->
-            <h:form id="chatForm" class="chat-input">
-                <h:inputText id="messageInput" value="#{chatBean.currentMessage}" styleClass="form-control"
-                    placeholder="Type your question..."
-                    onkeypress="if(event.keyCode==13){document.getElementById('chatForm:sendBtn').click();return false;}" />
-
-                <h:commandButton id="sendBtn" value="Send" action="#{chatBean.sendMessage}"
-                    styleClass="btn btn-primary">
-                    <f:ajax execute="messageInput" render="messagesPanel messageInput" onevent="scrollToBottom" />
-                </h:commandButton>
-            </h:form>
+                </div>
+            </h:panelGroup>
         </div>
-    </ui:define>
-
-    <ui:define name="scripts">
-        <script>
-            function scrollToBottom(data) {
-                if (data.status === 'success') {
-                    var chatArea = document.getElementById('chatArea');
-                    if (chatArea) {
-                        chatArea.scrollTop = chatArea.scrollHeight;
-                    }
-                }
-            }
-            // Initial scroll
-            window.addEventListener('load', function () {
-                var chatArea = document.getElementById('chatArea');
-                if (chatArea) chatArea.scrollTop = chatArea.scrollHeight;
-            });
-        </script>
     </ui:define>
 </ui:composition>
 

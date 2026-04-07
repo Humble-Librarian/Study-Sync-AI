@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="title">First-Time Setup - Study-Sync AI</ui:define>
+
+    <ui:define name="content">
+        <div class="d-flex justify-center">
+            <div class="card card-glass" style="max-width: 640px; width: 100%;">
+                <h1 class="text-xl fw-bold mb-3">Study Sync AI First-Time Setup</h1>
+                <p class="text-muted mb-4">
+                    Choose a shared folder where Study Sync AI will store uploaded PDFs and parsed page indices.
+                    The app will create <code>pdfs</code> and <code>indices</code> automatically.
+                </p>
+
+                <h:form id="setupForm">
+                    <h:panelGroup rendered="#{not empty setupBean.errorMessage}">
+                        <div class="alert alert-danger mb-3">#{setupBean.errorMessage}</div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{not empty setupBean.successMessage}">
+                        <div class="alert alert-success mb-3">#{setupBean.successMessage}</div>
+                    </h:panelGroup>
+
+                    <div class="form-group mb-3">
+                        <h:outputLabel for="pathInput" value="Shared data folder path" styleClass="form-label"/>
+                        <h:inputText id="pathInput" value="#{setupBean.userPath}" styleClass="form-control"
+                                     required="true" requiredMessage="Folder path is required."
+                                     placeholder="e.g. C:/StudySync_Data or /home/user/StudySync_Data"/>
+                        <h:message for="pathInput" styleClass="text-danger text-sm"/>
+                    </div>
+
+                    <div class="text-muted text-sm mb-4">
+                        This path is reused across sessions as persistent configuration.
+                    </div>
+
+                    <h:commandButton value="Save and Continue" action="#{setupBean.saveSharedPath}"
+                                     styleClass="btn btn-primary"/>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>
