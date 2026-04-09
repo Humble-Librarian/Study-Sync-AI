@@ -1,6 +1,7 @@
 package com.studysync.beans;
 
 import com.studysync.services.ConfigService;
+import com.studysync.services.RagService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -32,15 +33,21 @@ public class FlashcardBean implements Serializable {
     @ManagedProperty(value = "#{dashboardBean}")
     private DashboardBean dashboardBean;
 
+    @ManagedProperty(value = "#{ragService}")
+    private RagService ragService;
+
     private List<Flashcard> flashcards = new ArrayList<>();
     private String documentName = "";
     private int documentId;
     private boolean loading = false;
 
+    private int numEasy = 3;
+    private int numMedium = 3;
+    private int numHard = 2;
+
     @PostConstruct
     public void init() {
         refreshDocumentSelectionFromRequest();
-        generateFlashcards();
     }
 
     public void generateFlashcards() {
@@ -59,39 +66,25 @@ public class FlashcardBean implements Serializable {
         }
 
         try {
-            List<PageChunk> pages = readSourcePages(documentName);
-            if (pages.isEmpty()) {
-                flashcards.add(new Flashcard(
-                        1,
-                        "How to generate cards for " + documentName + "?",
-                        "No extractable text was found for this document yet. Try re-uploading a text-based PDF (not image-only scan).",
-                        "easy"
-                ));
-                loading = false;
+            if (ragService == null) {
+                flashcards.add(new Flashcard(1, "Service unavailable", "RagService not injected.", "hard"));
                 return;
             }
-
-            int cardId = 1;
-            int limit = Math.min(8, pages.size());
-            for (int i = 0; i < limit; i++) {
-                PageChunk chunk = pages.get(i);
-                String answer = summarize(chunk.text, 280);
-                if (answer.isEmpty()) {
-                    continue;
+            
+            JSONArray jsonCards = ragService.generateFlashcards(documentName, "groq", numEasy, numMedium, numHard);
+            if (jsonCards != null && jsonCards.length() > 0) {
+                int cardId = 1;
+                for (int i = 0; i < jsonCards.length(); i++) {
+                    JSONObject obj = jsonCards.optJSONObject(i);
+                    if (obj != null) {
+                        String q = obj.optString("question", "No question");
+                        String a = obj.optString("answer", "No answer");
+                        String d = obj.optString("difficulty", "medium").toLowerCase();
+                        flashcards.add(new Flashcard(cardId++, q, a, d));
+                    }
                 }
-
-                String question = buildQuestion(documentName, chunk.page, chunk.text);
-                String difficulty = difficultyFor(answer.length(), chunk.page);
-                flashcards.add(new Flashcard(cardId++, question, answer, difficulty));
-            }
-
-            if (flashcards.isEmpty()) {
-                flashcards.add(new Flashcard(
-                        1,
-                        "No extractable content",
-                        "We found the index file, but it has no usable text for flashcard generation.",
-                        "medium"
-                ));
+            } else {
+                flashcards.add(new Flashcard(1, "No extractable content", "The backend returned an empty response.", "medium"));
             }
         } catch (Exception e) {
             flashcards.add(new Flashcard(
@@ -139,123 +132,6 @@ public class FlashcardBean implements Serializable {
         }
     }
 
-    private List<PageChunk> readSourcePages(String docName) throws Exception {
-        List<PageChunk> fromIndex = readIndexedPages(docName);
-        if (!fromIndex.isEmpty()) {
-            return fromIndex;
-        }
-        return readPdfPages(docName);
-    }
-
-    private List<PageChunk> readIndexedPages(String docName) throws Exception {
-        List<PageChunk> pages = new ArrayList<>();
-        if (configService == null || !configService.isPathConfigured()) {
-            return pages;
-        }
-
-        String base = removeExtension(docName);
-        Path indexPath = Paths.get(configService.getIndicesDir(), base + ".index.json");
-        if (!Files.exists(indexPath)) {
-            return pages;
-        }
-
-        String json = Files.readString(indexPath, StandardCharsets.UTF_8);
-        JSONArray arr = new JSONArray(json);
-        for (int i = 0; i < arr.length(); i++) {
-            JSONObject obj = arr.optJSONObject(i);
-            if (obj == null) {
-                continue;
-            }
-            int page = obj.optInt("page", i + 1);
-            String text = obj.optString("text", "").trim();
-            if (!text.isEmpty()) {
-                pages.add(new PageChunk(page, text));
-            }
-        }
-        return pages;
-    }
-
-    private List<PageChunk> readPdfPages(String docName) throws Exception {
-        List<PageChunk> pages = new ArrayList<>();
-        if (configService == null || !configService.isPathConfigured()) {
-            return pages;
-        }
-
-        Path pdfPath = Paths.get(configService.getPdfsDir(), docName);
-        if (!Files.exists(pdfPath)) {
-            return pages;
-        }
-
-        try (PDDocument document = PDDocument.load(pdfPath.toFile())) {
-            int pageCount = Math.min(document.getNumberOfPages(), 20);
-            PDFTextStripper stripper = new PDFTextStripper();
-
-            for (int page = 1; page <= pageCount; page++) {
-                stripper.setStartPage(page);
-                stripper.setEndPage(page);
-                String text = stripper.getText(document);
-                if (text != null) {
-                    text = text.replaceAll("\\s+", " ").trim();
-                    if (!text.isEmpty()) {
-                        pages.add(new PageChunk(page, text));
-                    }
-                }
-            }
-        }
-        return pages;
-    }
-
-    private String buildQuestion(String docName, int page, String text) {
-        String firstSentence = firstSentence(text);
-        if (firstSentence.isEmpty()) {
-            return "What is discussed on page " + page + " of " + docName + "?";
-        }
-
-        String seed = summarize(firstSentence, 80);
-        return "Explain this idea from page " + page + " of " + docName + ": \"" + seed + "\"";
-    }
-
-    private String firstSentence(String text) {
-        String normalized = text.replace('\n', ' ').trim();
-        if (normalized.isEmpty()) {
-            return "";
-        }
-        int idx = normalized.indexOf('.');
-        if (idx > 0) {
-            return normalized.substring(0, idx + 1).trim();
-        }
-        return normalized;
-    }
-
-    private String summarize(String text, int maxLen) {
-        String normalized = text.replaceAll("\\s+", " ").trim();
-        if (normalized.isEmpty()) {
-            return "";
-        }
-        if (normalized.length() <= maxLen) {
-            return normalized;
-        }
-        return normalized.substring(0, maxLen).trim() + "...";
-    }
-
-    private String difficultyFor(int textLength, int page) {
-        if (textLength < 130 || page % 3 == 1) {
-            return "easy";
-        }
-        if (textLength < 220 || page % 3 == 2) {
-            return "medium";
-        }
-        return "hard";
-    }
-
-    private String removeExtension(String fileName) {
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex <= 0) {
-            return fileName;
-        }
-        return fileName.substring(0, dotIndex);
-    }
-
     // Getters and Setters
     public ConfigService getConfigService() {
         return configService;
@@ -271,6 +147,14 @@ public class FlashcardBean implements Serializable {
 
     public void setDashboardBean(DashboardBean dashboardBean) {
         this.dashboardBean = dashboardBean;
+    }
+
+    public RagService getRagService() {
+        return ragService;
+    }
+
+    public void setRagService(RagService ragService) {
+        this.ragService = ragService;
     }
 
     public List<Flashcard> getFlashcards() {
@@ -301,14 +185,28 @@ public class FlashcardBean implements Serializable {
         return flashcards.size();
     }
 
-    private static class PageChunk {
-        private final int page;
-        private final String text;
+    public int getNumEasy() {
+        return numEasy;
+    }
 
-        private PageChunk(int page, String text) {
-            this.page = page;
-            this.text = text;
-        }
+    public void setNumEasy(int numEasy) {
+        this.numEasy = numEasy;
+    }
+
+    public int getNumMedium() {
+        return numMedium;
+    }
+
+    public void setNumMedium(int numMedium) {
+        this.numMedium = numMedium;
+    }
+
+    public int getNumHard() {
+        return numHard;
+    }
+
+    public void setNumHard(int numHard) {
+        this.numHard = numHard;
     }
 
     // Inner Flashcard class

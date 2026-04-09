@@ -50,7 +50,7 @@ def _index_path(doc_name: str, indices_dir: str) -> str:
     return os.path.join(indices_dir, f"{base}.index.json")
 
 
-def build_index(doc_name: str, force: bool = False, data_dir: str = "") -> List[Dict]:
+def build_index(doc_name: str, force: bool = False, data_dir: str = "", llm_choice: str = "groq") -> List[Dict]:
     pdfs_dir, indices_dir, base_candidates = _resolve_dirs(data_dir)
     doc_file = os.path.basename(doc_name)
 
@@ -81,11 +81,65 @@ def build_index(doc_name: str, force: bool = False, data_dir: str = "") -> List[
             return json.load(f)
 
     pages: List[Dict] = []
-    with pdfplumber.open(pdf_path) as pdf:
-        for i, page in enumerate(pdf.pages, start=1):
-            text = (page.extract_text() or "").strip()
-            if text:
-                pages.append({"page": i, "text": text})
+    import fitz
+    import base64
+    from utils.llm_nim import call_nim_vision
+    import concurrent.futures
+
+    images_target_dir = os.path.join(selected_pdfs_dir, "..", "images", doc_name.replace(".pdf", ""))
+    os.makedirs(images_target_dir, exist_ok=True)
+    
+    # Store all asynchronous vision tasks so we can run them in parallel
+    vision_tasks = []
+    
+    with fitz.open(pdf_path) as pdf_doc:
+        for i, page in enumerate(pdf_doc, start=1):
+            text = (page.get_text() or "").strip()
+            
+            page_images_data = []
+            if llm_choice.lower() == "nim":
+                image_list = page.get_images()
+                for img_idx, img in enumerate(image_list):
+                    xref = img[0]
+                    try:
+                        base_image = pdf_doc.extract_image(xref)
+                        image_bytes = base_image["image"]
+                        image_ext = base_image["ext"]
+                        
+                        img_filename = f"page{i}_img{img_idx}.{image_ext}"
+                        img_filepath = os.path.join(images_target_dir, img_filename)
+                        with open(img_filepath, "wb") as img_fp:
+                            img_fp.write(image_bytes)
+                            
+                        b64 = base64.b64encode(image_bytes).decode("utf-8")
+                        prompt = "Describe this diagram, chart, or visual so completely that somebody reading only text could fully recreate its insights and answer analytical questions about it. Be as detailed as possible."
+                        
+                        img_data = {
+                            "path": f"images/{doc_name.replace('.pdf', '')}/{img_filename}",
+                            "description": "Processing..."
+                        }
+                        page_images_data.append(img_data)
+                        vision_tasks.append((prompt, b64, img_data))
+                    except Exception:
+                        continue
+
+            if text or page_images_data:
+                pages.append({"page": i, "text": text, "images": page_images_data})
+
+    # Execute all NIM API calls concurrently
+    if vision_tasks:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            future_to_img_data = {
+                executor.submit(call_nim_vision, task[0], task[1]): task[2]
+                for task in vision_tasks
+            }
+            for future in concurrent.futures.as_completed(future_to_img_data):
+                img_data = future_to_img_data[future]
+                try:
+                    description = future.result()
+                    img_data["description"] = description
+                except Exception as e:
+                    img_data["description"] = f"Image transcription failed: {str(e)}"
 
     with open(idx_path, "w", encoding="utf-8") as f:
         json.dump(pages, f, ensure_ascii=False, indent=2)

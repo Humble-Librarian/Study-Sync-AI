@@ -31,3 +31,27 @@ def call_groq(
         temperature=temperature,
     )
     return (response.choices[0].message.content or "").strip()
+
+def call_groq_vision(prompt: str, base64_image: str) -> str:
+    client = _get_client()
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.2-90b-vision-preview",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}",
+                        },
+                    },
+                ],
+            }],
+            max_tokens=512,
+            temperature=0.2,
+        )
+        return (response.choices[0].message.content or "").strip()
+    except Exception as e:
+        return f"Image transcription failed: {str(e)}"

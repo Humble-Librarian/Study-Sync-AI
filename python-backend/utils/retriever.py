@@ -10,7 +10,11 @@ def retrieve_top_k(query: str, pages: List[Dict], top_k: int = 3) -> List[Dict]:
         return []
 
     top_k = max(1, int(top_k))
-    corpus = [p.get("text", "") for p in pages]
+    corpus = []
+    for p in pages:
+        text = p.get("text", "")
+        img_narratives = "\n".join([f"\n[Visual Component: {img.get('description', '')}]" for img in p.get("images", [])])
+        corpus.append((text + img_narratives).strip())
     vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2))
 
     try:
@@ -30,8 +34,9 @@ def retrieve_top_k(query: str, pages: List[Dict], top_k: int = 3) -> List[Dict]:
             results.append(
                 {
                     "page": pages[idx]["page"],
-                    "text": pages[idx]["text"],
+                    "text": corpus[idx],
                     "score": score,
+                    "images": pages[idx].get("images", [])
                 }
             )
 

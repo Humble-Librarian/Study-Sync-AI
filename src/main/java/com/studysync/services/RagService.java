@@ -1,5 +1,6 @@
 package com.studysync.services;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.faces.bean.ApplicationScoped;
@@ -43,8 +44,8 @@ public class RagService {
 
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(30_000);
-        connection.setReadTimeout(30_000);
+        connection.setConnectTimeout(60_000);
+        connection.setReadTimeout(300_000);
 
         int responseCode = connection.getResponseCode();
         InputStream responseStream = responseCode >= 200 && responseCode < 300
@@ -73,6 +74,42 @@ public class RagService {
         }
 
         return json;
+    }
+
+    public JSONArray generateFlashcards(String docName, String llmChoice, int easy, int medium, int hard) throws Exception {
+        if (isBlank(docName)) {
+            return new JSONArray();
+        }
+
+        String backendUrl = resolveBackendUrl();
+        String selectedLlm = isBlank(llmChoice) ? "groq" : llmChoice;
+        String dataDir = resolveDataDir();
+
+        String url = backendUrl + "/flashcards"
+                + "?docName=" + URLEncoder.encode(docName, StandardCharsets.UTF_8.name())
+                + "&llm_choice=" + URLEncoder.encode(selectedLlm, StandardCharsets.UTF_8.name())
+                + "&data_dir=" + URLEncoder.encode(dataDir, StandardCharsets.UTF_8.name())
+                + "&easy=" + easy + "&medium=" + medium + "&hard=" + hard;
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(60000);
+        connection.setReadTimeout(300000);
+
+        int responseCode = connection.getResponseCode();
+        InputStream responseStream = responseCode >= 200 && responseCode < 300
+                ? connection.getInputStream()
+                : connection.getErrorStream();
+
+        String body = readBody(responseStream);
+        if (responseCode >= 200 && responseCode < 300) {
+            try {
+                return new JSONArray(body);
+            } catch (Exception e) {
+                return new JSONArray();
+            }
+        }
+        return new JSONArray();
     }
 
     private String resolveBackendUrl() {

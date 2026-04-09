@@ -1,10 +1,12 @@
 import os
+import json
+import random
 from typing import Callable
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 from config import DATA_DIR
-from utils.generator import build_rag_prompt
+from utils.generator import build_rag_prompt, build_flashcards_prompt
 from utils.indexer import build_index
 from utils.llm_groq import call_groq
 from utils.llm_nim import call_nim
@@ -66,7 +68,7 @@ def chat():
         )
 
     try:
-        pages = build_index(doc_name, data_dir=data_dir)
+        pages = build_index(doc_name, data_dir=data_dir, llm_choice=llm_choice)
         chunks = retrieve_top_k(user_query, pages, top_k=max(1, top_k))
 
         if not chunks:
@@ -90,6 +92,7 @@ def chat():
                     else chunk["text"]
                 ),
                 "score": chunk.get("score", 0.0),
+                "images": [img.get("path", "") for img in chunk.get("images", [])]
             }
             for chunk in chunks
         ]
@@ -105,6 +108,81 @@ def chat():
         return jsonify({"success": False, "error": str(e)}), 404
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/flashcards", methods=["GET"])
+def flashcards():
+    doc_name = request.args.get("docName", "").strip()
+    llm_choice = request.args.get("llm_choice", "groq")
+    data_dir = _resolve_data_dir(request.args.get("data_dir", ""))
+
+    if not doc_name:
+        return jsonify({"success": False, "error": "Missing docName parameter."}), 400
+
+    try:
+        easy = int(request.args.get("easy", 3))
+        medium = int(request.args.get("medium", 3))
+        hard = int(request.args.get("hard", 2))
+    except ValueError:
+        easy, medium, hard = 3, 3, 2
+
+    try:
+        pages = build_index(doc_name, data_dir=data_dir, llm_choice=llm_choice)
+        if not pages:
+            return jsonify({"success": False, "error": "No text found in document."}), 404
+
+        # Sample a few pages so the flashcards are diverse, but limit to 10 for context size
+        sample_size = min(10, len(pages))
+        sampled_pages = random.sample(pages, sample_size)
+        sampled_pages.sort(key=lambda x: x["page"])
+
+        prompt = build_flashcards_prompt(sampled_pages, easy=easy, medium=medium, hard=hard)
+        answer = _answer_with_fallback(prompt, llm_choice)
+
+        import re
+        answer = answer.strip()
+        match = re.search(r"\[.*\]", answer, re.DOTALL)
+        if match:
+            flashcards_data = json.loads(match.group(0))
+        else:
+            raise ValueError("LLM did not return a valid JSON array.")
+        return jsonify(flashcards_data)
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/pdfs/<path:filename>", methods=["GET"])
+def serve_pdf(filename):
+    try:
+        data_dir = _resolve_data_dir(request.args.get("data_dir", ""))
+        pdfs_dir = os.path.join(data_dir, "pdfs") if data_dir else os.path.join(os.path.abspath(DATA_DIR), "pdfs")
+        
+        filepath = os.path.join(pdfs_dir, filename)
+        with open(filepath, "rb") as f:
+            content = f.read()
+            
+        from flask import Response
+        response = Response(content, mimetype="application/pdf")
+        response.headers["Content-Disposition"] = "inline; filename*=UTF-8''" + filename
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["X-Frame-Options"] = "ALLOWALL"
+        response.headers["Content-Security-Policy"] = "frame-ancestors *"
+        return response
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 404
+
+@app.route("/images/<path:filename>", methods=["GET"])
+def serve_image(filename):
+    try:
+        data_dir = _resolve_data_dir(request.args.get("data_dir", ""))
+        images_dir = os.path.join(data_dir, "images") if data_dir else os.path.join(os.path.abspath(DATA_DIR), "images")
+        
+        response = send_from_directory(images_dir, filename)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 404
 
 
 @app.route("/list-documents", methods=["GET"])

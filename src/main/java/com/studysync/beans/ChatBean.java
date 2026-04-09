@@ -10,6 +10,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import java.io.Serializable;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,10 +105,19 @@ public class ChatBean implements Serializable {
                 continue;
             }
 
+            List<String> images = new ArrayList<>();
+            JSONArray imagesArray = item.optJSONArray("images");
+            if (imagesArray != null) {
+                for (int j = 0; j < imagesArray.length(); j++) {
+                    images.add(imagesArray.optString(j));
+                }
+            }
+
             pages.add(new SourcePage(
                     item.optInt("page", 0),
                     item.optString("text", ""),
-                    item.optDouble("score", 0.0)
+                    item.optDouble("score", 0.0),
+                    images
             ));
         }
         return pages;
@@ -130,6 +141,17 @@ public class ChatBean implements Serializable {
 
     public void setDocName(String docName) {
         this.docName = docName;
+    }
+
+    public String getEncodedDocName() {
+        if (isBlank(docName)) {
+            return "";
+        }
+        try {
+            return URLEncoder.encode(docName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+        } catch (Exception e) {
+            return docName;
+        }
     }
 
     public String getUserQuery() {
@@ -190,11 +212,13 @@ public class ChatBean implements Serializable {
         private final int page;
         private final String text;
         private final double score;
+        private final List<String> images;
 
-        public SourcePage(int page, String text, double score) {
+        public SourcePage(int page, String text, double score, List<String> images) {
             this.page = page;
             this.text = text;
             this.score = score;
+            this.images = images != null ? images : new ArrayList<>();
         }
 
         public int getPage() {
@@ -207,6 +231,10 @@ public class ChatBean implements Serializable {
 
         public double getScore() {
             return score;
+        }
+
+        public List<String> getImages() {
+            return images;
         }
     }
 }

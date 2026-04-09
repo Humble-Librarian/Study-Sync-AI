@@ -10,64 +10,90 @@
     <ui:define name="title">Chat - Study-Sync AI</ui:define>
 
     <ui:define name="content">
-        <div class="card card-glass" style="max-width: 980px; margin: 0 auto;">
-            <div class="d-flex justify-between align-center mb-4">
-                <h:link outcome="/pages/dashboard.xhtml" styleClass="btn btn-secondary">Back</h:link>
-                <h2 class="text-xl fw-bold" style="margin: 0;">#{empty chatBean.docName ? 'Document Chat' : chatBean.docName}</h2>
+        <div class="chat-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); max-width: 1600px; margin: 0 auto; height: 82vh;">
+            
+            <!-- Left Panel (PDF Preview) -->
+            <div class="card card-glass pdf-panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; border-radius: var(--radius-lg);">
+                <div style="background: rgba(30, 30, 50, 0.6); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+                    <span class="fw-bold" style="color: var(--text-primary);">Document Preview</span>
+                </div>
+                <h:panelGroup rendered="#{not empty chatBean.docName}" layout="block" style="flex: 1; background: #fff;">
+                    <iframe src="#{request.contextPath}/resources/pdfjs/web/viewer.html?file=#{request.contextPath}/local-pdf/#{chatBean.encodedDocName}" width="100%" height="100%" style="border: none;"></iframe>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{empty chatBean.docName}" layout="block" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: var(--text-muted);">No document available for preview.</span>
+                </h:panelGroup>
             </div>
 
-            <h:form id="chatForm">
-                <h:inputHidden id="docNameHidden" value="#{chatBean.docName}" />
+            <!-- Right Panel (Chat Interaction) -->
+            <div class="card card-glass chat-panel" style="overflow-y: auto; display: flex; flex-direction: column;">
+                <div class="d-flex justify-between align-center mb-4">
+                    <h:link outcome="/pages/dashboard.xhtml" styleClass="btn btn-secondary">Back</h:link>
+                    <h2 class="text-xl fw-bold" style="margin: 0; text-align: right; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">#{empty chatBean.docName ? 'Document Chat' : chatBean.docName}</h2>
+                </div>
 
-                <h:panelGroup rendered="#{not empty chatBean.errorMessage}">
-                    <div class="alert alert-danger mb-4">#{chatBean.errorMessage}</div>
+                <h:form id="chatForm">
+                    <h:inputHidden id="docNameHidden" value="#{chatBean.docName}" />
+
+                    <h:panelGroup rendered="#{not empty chatBean.errorMessage}">
+                        <div class="alert alert-danger mb-4">#{chatBean.errorMessage}</div>
+                    </h:panelGroup>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
+                        <div class="form-group">
+                            <h:outputLabel for="llmChoice" value="Model Provider" styleClass="form-label"/>
+                            <h:selectOneMenu id="llmChoice" value="#{chatBean.llmChoice}" styleClass="form-control">
+                                <f:selectItem itemLabel="Groq (Llama 3.3)" itemValue="groq"/>
+                                <f:selectItem itemLabel="NVIDIA NIM" itemValue="nim"/>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="topK" value="Context Depth" styleClass="form-label"/>
+                            <h:inputText id="topK" value="#{chatBean.topK}" styleClass="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <h:outputLabel for="question" value="Ask a Question" styleClass="form-label"/>
+                        <h:inputTextarea id="question" value="#{chatBean.userQuery}" styleClass="form-control" rows="3"
+                                         placeholder="Type your question about this document..."/>
+                    </div>
+
+                    <div class="d-flex justify-end mb-4">
+                        <h:commandButton value="Ask AI" action="#{chatBean.submitQuery}" styleClass="btn btn-primary w-100"/>
+                    </div>
+                </h:form>
+
+                <h:panelGroup rendered="#{not empty chatBean.answer}">
+                    <div class="card" style="margin-bottom: var(--space-4); background: linear-gradient(135deg, rgba(82, 53, 232, 0.1) 0%, rgba(94, 219, 211, 0.1) 100%); border-color: var(--accent);">
+                        <h3 class="fw-bold mb-3" style="color: var(--accent);">AI Answer</h3>
+                        <p style="white-space: pre-wrap; margin: 0; line-height: 1.6;">#{chatBean.answer}</p>
+                    </div>
                 </h:panelGroup>
 
-                <div class="form-group mb-3">
-                    <h:outputLabel for="llmChoice" value="Model Provider" styleClass="form-label"/>
-                    <h:selectOneMenu id="llmChoice" value="#{chatBean.llmChoice}" styleClass="form-control">
-                        <f:selectItem itemLabel="Groq (Llama 3.3)" itemValue="groq"/>
-                        <f:selectItem itemLabel="NVIDIA NIM" itemValue="nim"/>
-                    </h:selectOneMenu>
-                </div>
-
-                <div class="form-group mb-3">
-                    <h:outputLabel for="topK" value="Top Context Chunks" styleClass="form-label"/>
-                    <h:inputText id="topK" value="#{chatBean.topK}" styleClass="form-control"/>
-                </div>
-
-                <div class="form-group mb-3">
-                    <h:outputLabel for="question" value="Ask a Question" styleClass="form-label"/>
-                    <h:inputTextarea id="question" value="#{chatBean.userQuery}" styleClass="form-control" rows="4"
-                                     placeholder="Type your question about this document..."/>
-                </div>
-
-                <div class="d-flex justify-end mb-4">
-                    <h:commandButton value="Ask StudySync AI" action="#{chatBean.submitQuery}" styleClass="btn btn-primary"/>
-                </div>
-            </h:form>
-
-            <h:panelGroup rendered="#{not empty chatBean.answer}">
-                <div class="card" style="margin-bottom: var(--space-4);">
-                    <h3 class="fw-bold mb-3">Answer</h3>
-                    <p style="white-space: pre-wrap; margin: 0;">#{chatBean.answer}</p>
-                </div>
-            </h:panelGroup>
-
-            <h:panelGroup rendered="#{chatBean.showSources}">
-                <div class="card">
-                    <h3 class="fw-bold mb-3">Source Pages</h3>
-                    <ui:repeat value="#{chatBean.sourcePages}" var="src">
-                        <div class="mb-3" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-light);">
-                            <div class="d-flex justify-between align-center mb-1">
-                                <strong>Page #{src.page}</strong>
-                                <span class="badge badge-info">Score: #{src.score}</span>
+                <h:panelGroup rendered="#{chatBean.showSources}">
+                    <div class="card" style="background: rgba(30, 30, 50, 0.4);">
+                        <h3 class="fw-bold mb-3">Retrieved Context</h3>
+                        <ui:repeat value="#{chatBean.sourcePages}" var="src">
+                            <div class="mb-3" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-light);">
+                                <div class="d-flex justify-between align-center mb-1">
+                                    <strong style="color: var(--accent-light);">Page #{src.page}</strong>
+                                    <span class="badge badge-info" style="font-size: 0.75rem;">Score: #{src.score}</span>
+                                </div>
+                                <p style="white-space: pre-wrap; margin: 0; font-size: 0.9rem; color: var(--text-secondary);">#{src.text}</p>
+                                <h:panelGroup rendered="#{not empty src.images}">
+                                    <div style="margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2);">
+                                        <ui:repeat value="#{src.images}" var="imgPath">
+                                            <img src="http://localhost:5000/#{imgPath}" alt="Diagram from PDF" style="max-width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border-accent); box-shadow: var(--shadow-sm);" />
+                                        </ui:repeat>
+                                    </div>
+                                </h:panelGroup>
                             </div>
-                            <p style="white-space: pre-wrap; margin: 0;">#{src.text}</p>
-                        </div>
-                    </ui:repeat>
-                </div>
-            </h:panelGroup>
+                        </ui:repeat>
+                    </div>
+                </h:panelGroup>
+            </div>
         </div>
     </ui:define>
 </ui:composition>

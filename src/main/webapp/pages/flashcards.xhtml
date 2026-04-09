@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Flashcards - Study-Sync AI</ui:define>
@@ -17,16 +18,40 @@
                     ← Back to Dashboard
                 </h:link>
                 <h2 style="margin: var(--space-2) 0 0 0;">Flashcards: #{flashcardBean.documentName}</h2>
-                <p class="text-muted text-sm">#{flashcardBean.cardCount} cards generated</p>
+                <h:panelGroup id="cardCountHeader">
+                    <h:panelGroup rendered="#{flashcardBean.cardCount > 0}">
+                        <p class="text-muted text-sm">#{flashcardBean.cardCount} cards generated</p>
+                    </h:panelGroup>
+                </h:panelGroup>
             </div>
-
-            <h:form id="regenerateForm">
-                <h:commandButton value="🔄 Regenerate" action="#{flashcardBean.regenerate}"
-                    styleClass="btn btn-secondary">
-                    <f:ajax render="flashcardGrid" />
-                </h:commandButton>
-            </h:form>
         </div>
+
+        <!-- Configuration Panel -->
+        <h:form id="configForm">
+            <div class="card card-glass mb-4 p-4" style="border: 1px solid var(--border-light); background: rgba(30,30,50,0.6);">
+                <h4 class="mb-3 text-accent fw-bold" style="margin-top: 0;">Configure Your Deck</h4>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-bottom: var(--space-4);">
+                    <div class="form-group">
+                        <h:outputLabel value="🟢 Easy Cards" style="color: var(--success); font-weight: bold;"/>
+                        <h:inputText value="#{flashcardBean.numEasy}" styleClass="form-control" pt:type="number" pt:min="0" pt:max="12" />
+                    </div>
+                    <div class="form-group">
+                        <h:outputLabel value="🟡 Medium Cards" style="color: var(--warning); font-weight: bold;"/>
+                        <h:inputText value="#{flashcardBean.numMedium}" styleClass="form-control" pt:type="number" pt:min="0" pt:max="12" />
+                    </div>
+                    <div class="form-group">
+                        <h:outputLabel value="🔴 Hard Cards" style="color: var(--danger); font-weight: bold;"/>
+                        <h:inputText value="#{flashcardBean.numHard}" styleClass="form-control" pt:type="number" pt:min="0" pt:max="12" />
+                    </div>
+                </div>
+                <div class="d-flex justify-end align-center">
+                    <h:commandLink action="#{flashcardBean.regenerate}" styleClass="btn btn-primary px-4 py-2" style="font-weight: bold; text-decoration: none;">
+                        <span>✨ Generate AI Flashcards</span>
+                        <f:ajax execute="@form" render="flashcardGrid cardCountHeader" />
+                    </h:commandLink>
+                </div>
+            </div>
+        </h:form>
 
         <!-- Flashcard Grid -->
         <h:panelGroup id="flashcardGrid">
