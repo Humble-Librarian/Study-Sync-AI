@@ -3,61 +3,65 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
-    <ui:define name="title">Login - Study-Sync AI</ui:define>
+    <ui:define name="title">Register - Study-Sync AI</ui:define>
 
     <ui:define name="header">
-        <!-- Empty header for login page -->
+        <!-- Empty header for register page -->
     </ui:define>
 
     <ui:define name="content">
         <div class="d-flex align-center justify-center" style="min-height: 80vh;">
             <div class="card card-glass animate-in" style="width: 100%; max-width: 420px;">
-                <!-- Logo & Tagline -->
+                <!-- Logo &amp; Tagline -->
                 <div class="text-center mb-4">
                     <div class="logo justify-center" style="font-size: 2rem; margin-bottom: var(--space-3);">
                         Study-Sync AI
                     </div>
-                    <p class="text-muted">Learn Smarter with AI</p>
+                    <p class="text-muted">Create your account</p>
                 </div>
 
-                <!-- Login Form -->
-                <h:form id="loginForm">
+                <!-- Register Form -->
+                <h:form id="registerForm">
                     <h:messages globalOnly="true" styleClass="alert alert-danger mb-4" />
 
                     <div class="form-group animate-in delay-1">
                         <h:outputLabel for="username" value="Username" styleClass="form-label" />
                         <h:inputText id="username" value="#{loginBean.username}" styleClass="form-control"
-                            placeholder="Enter your username" required="true" requiredMessage="Username is required" />
+                            placeholder="Choose a username" required="true" requiredMessage="Username is required" />
                         <h:message for="username" styleClass="text-danger text-sm" />
                     </div>
 
                     <div class="form-group animate-in delay-2">
                         <h:outputLabel for="password" value="Password" styleClass="form-label" />
                         <h:inputSecret id="password" value="#{loginBean.password}" styleClass="form-control"
-                            placeholder="Enter your password" required="true" requiredMessage="Password is required" />
+                            placeholder="At least 6 characters" required="true" requiredMessage="Password is required" />
                         <h:message for="password" styleClass="text-danger text-sm" />
                     </div>
 
-                    <div class="animate-in delay-3">
-                        <h:commandButton value="⚡ Login" action="#{loginBean.login}"
+                    <div class="form-group animate-in delay-3">
+                        <h:outputLabel for="confirmPassword" value="Confirm Password" styleClass="form-label" />
+                        <h:inputSecret id="confirmPassword" value="#{loginBean.confirmPassword}" styleClass="form-control"
+                            placeholder="Re-enter your password" required="true" requiredMessage="Please confirm your password" />
+                        <h:message for="confirmPassword" styleClass="text-danger text-sm" />
+                    </div>
+
+                    <div class="animate-in delay-4">
+                        <h:commandButton value="✨ Create Account" action="#{loginBean.register}"
                             styleClass="btn btn-primary btn-lg w-100" />
                     </div>
                 </h:form>
 
                 <!-- Footer Link -->
-                <div class="text-center mt-4 animate-in delay-4">
-                    <span class="text-muted text-sm">Don't have an account? </span>
-                    <h:link outcome="/pages/register.xhtml" styleClass="text-sm">Register here</h:link>
+                <div class="text-center mt-4 animate-in delay-5">
+                    <span class="text-muted text-sm">Already have an account? </span>
+                    <h:link outcome="/pages/login.xhtml" styleClass="text-sm">Sign in here</h:link>
                 </div>
-
-                <!-- Demo Hint -->
-
             </div>
         </div>
     </ui:define>
 
     <ui:define name="footer">
-        <!-- Empty footer for login page -->
+        <!-- Empty footer for register page -->
     </ui:define>
 </ui:composition>
 

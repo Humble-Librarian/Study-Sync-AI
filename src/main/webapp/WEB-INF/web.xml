@@ -16,15 +16,15 @@
     <!-- Optional JDBC config for persisting app_config in MySQL -->
     <context-param>
         <param-name>studysync.db.url</param-name>
-        <param-value></param-value>
+        <param-value>jdbc:mysql://localhost:3306/StudySync?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</param-value>
     </context-param>
     <context-param>
         <param-name>studysync.db.user</param-name>
-        <param-value></param-value>
+        <param-value>root</param-value>
     </context-param>
     <context-param>
         <param-name>studysync.db.password</param-name>
-        <param-value></param-value>
+        <param-value>Pratham150904</param-value>
     </context-param>
 
     <!-- Python backend endpoint -->
