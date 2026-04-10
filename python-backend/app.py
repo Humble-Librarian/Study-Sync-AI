@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request, send_from_directory
 
 from config import DATA_DIR
 from utils.generator import build_rag_prompt, build_flashcards_prompt
+from utils.parser import parse_toon_flashcards
 from utils.indexer import build_index
 from utils.llm_groq import call_groq
 from utils.llm_nim import call_nim
@@ -42,6 +43,38 @@ def _answer_with_fallback(prompt: str, llm_choice: str) -> str:
                 f"Both LLM providers failed. "
                 f"{primary_name}: {primary_err} | {fallback_name}: {fallback_err}"
             )
+
+
+@app.route("/validate-keys", methods=["POST"])
+def validate_keys():
+    data = request.json or {}
+    groq_key = data.get("groq_key", "").strip()
+    nim_key = data.get("nim_key", "").strip()
+
+    results = {}
+    
+    if groq_key:
+        try:
+            from groq import Groq
+            client = Groq(api_key=groq_key)
+            client.models.list()
+            results["groq"] = {"valid": True}
+        except Exception as e:
+            results["groq"] = {"valid": False, "error": str(e)}
+
+    if nim_key:
+        try:
+            from openai import OpenAI
+            client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=nim_key)
+            client.models.list()
+            results["nim"] = {"valid": True}
+        except Exception as e:
+            results["nim"] = {"valid": False, "error": str(e)}
+
+    # Add CORS headers for typical JSF dev server, or just jsonify with standard CORS
+    response = jsonify(results)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route("/chat", methods=["GET"])
@@ -137,15 +170,11 @@ def flashcards():
         sampled_pages.sort(key=lambda x: x["page"])
 
         prompt = build_flashcards_prompt(sampled_pages, easy=easy, medium=medium, hard=hard)
-        answer = _answer_with_fallback(prompt, llm_choice)
+        raw = _answer_with_fallback(prompt, llm_choice)
 
-        import re
-        answer = answer.strip()
-        match = re.search(r"\[.*\]", answer, re.DOTALL)
-        if match:
-            flashcards_data = json.loads(match.group(0))
-        else:
-            raise ValueError("LLM did not return a valid JSON array.")
+        flashcards_data = parse_toon_flashcards(raw)
+        if not flashcards_data:
+            raise ValueError("Parser returned no flashcards from LLM output.")
         return jsonify(flashcards_data)
 
     except Exception as e:

@@ -2,20 +2,23 @@ from typing import Optional
 
 from openai import OpenAI
 
-from config import NVIDIA_NIM_API_KEY
+from config import get_nim_api_key
 
 _client: Optional[OpenAI] = None
-
+_client_key: Optional[str] = None
 
 def _get_client() -> OpenAI:
-    global _client
-    if _client is None:
-        if not NVIDIA_NIM_API_KEY:
-            raise EnvironmentError("NVIDIA_NIM_API_KEY is not set in .env")
+    global _client, _client_key
+    key = get_nim_api_key()
+    if not key:
+        raise EnvironmentError("NVIDIA_NIM_API_KEY is not set. Please configure it in Setup.")
+    
+    if _client is None or _client_key != key:
         _client = OpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
-            api_key=NVIDIA_NIM_API_KEY,
+            api_key=key,
         )
+        _client_key = key
     return _client
 
 

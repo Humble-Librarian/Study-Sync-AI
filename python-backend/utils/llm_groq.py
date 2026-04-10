@@ -2,17 +2,20 @@ from typing import Optional
 
 from groq import Groq
 
-from config import GROQ_API_KEY, GROQ_MODEL
+from config import get_groq_api_key, GROQ_MODEL
 
 _client: Optional[Groq] = None
-
+_client_key: Optional[str] = None
 
 def _get_client() -> Groq:
-    global _client
-    if _client is None:
-        if not GROQ_API_KEY:
-            raise EnvironmentError("GROQ_API_KEY is not set in .env")
-        _client = Groq(api_key=GROQ_API_KEY)
+    global _client, _client_key
+    key = get_groq_api_key()
+    if not key:
+        raise EnvironmentError("GROQ_API_KEY is not set. Please configure it in Setup.")
+    
+    if _client is None or _client_key != key:
+        _client = Groq(api_key=key)
+        _client_key = key
     return _client
 
 

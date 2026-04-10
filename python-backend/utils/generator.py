@@ -1,6 +1,13 @@
 from typing import Dict, List
 
 
+def _build_context(retrieved_chunks):
+    return "\n---\n".join(
+        f"[p{chunk['page']}] {chunk['text'].strip()}"
+        for chunk in retrieved_chunks
+    )
+
+
 def build_rag_prompt(query: str, retrieved_chunks: List[Dict]) -> str:
     context_parts = [
         f"[Page {chunk['page']}]\n{chunk['text']}" for chunk in retrieved_chunks
@@ -20,27 +27,27 @@ STUDENT QUESTION:
 ANSWER:"""
 
 
-def build_flashcards_prompt(retrieved_chunks: List[Dict], easy: int = 3, medium: int = 3, hard: int = 2) -> str:
-    context_parts = [
-        f"[Page {chunk['page']}]\n{chunk['text']}" for chunk in retrieved_chunks
-    ]
-    context = "\n\n---\n\n".join(context_parts)
+def build_flashcards_prompt(retrieved_chunks, easy=3, medium=3, hard=2):
+    context = _build_context(retrieved_chunks)
     total = easy + medium + hard
+    return f"""You are an expert flashcard author. Generate exactly {total} flashcards from the context below.
 
-    return f"""You are an expert AI teacher. Your task is to generate extremely high quality flashcards based on the provided text.
+DIFFICULTY:
+E=easy: direct recall (definitions, facts, names)
+M=medium: conceptual (explain why/how, cause/effect)
+H=hard: synthesis (compare, apply, infer across ideas)
 
-Generate EXACTLY {total} flashcards from the text chunks below. 
-Specifically, generate exactly:
-- {easy} "easy" flashcards
-- {medium} "medium" flashcards
-- {hard} "hard" flashcards
+QUALITY:
+- Questions must be self-contained and unambiguous
+- Answers: 1-2 sentences, no filler
+- No yes/no questions
+- Do not copy sentences verbatim from the text
 
-You MUST format your output as a valid JSON array of objects. 
-Each object must have exactly three keys: "question", "answer", and "difficulty".
-The "difficulty" must be exactly one of: "easy", "medium", "hard".
+COUNT (must be exact): {easy}E {medium}M {hard}H
 
-Do not wrap the JSON array in markdown formatting, just return raw JSON text starting with '['.
+OUTPUT — TOON format, raw, no markdown, no preamble:
+cards[{total}]{{question,answer,difficulty}}:
+<question>,<answer>,<E|M|H>
 
 CONTEXT:
-{context}
-"""
+{context}"""

@@ -31,12 +31,74 @@
                         <h:message for="pathInput" styleClass="text-danger text-sm"/>
                     </div>
 
-                    <div class="text-muted text-sm mb-4">
-                        This path is reused across sessions as persistent configuration.
+                    <div class="form-group mb-3">
+                        <h:outputLabel for="groqKeyInput" value="Groq API Key" styleClass="form-label"/>
+                        <h:inputSecret id="groqKeyInput" value="#{setupBean.groqApiKey}" styleClass="form-control"
+                                       redisplay="true" placeholder="gsk_..."/>
                     </div>
 
-                    <h:commandButton value="Save and Continue" action="#{setupBean.saveSharedPath}"
-                                     styleClass="btn btn-primary"/>
+                    <div class="form-group mb-3">
+                        <h:outputLabel for="nimKeyInput" value="NVIDIA NIM API Key" styleClass="form-label"/>
+                        <h:inputSecret id="nimKeyInput" value="#{setupBean.nimApiKey}" styleClass="form-control"
+                                       redisplay="true" placeholder="nvapi-..."/>
+                    </div>
+
+                    <div class="text-muted text-sm mb-4">
+                        These settings are reused across sessions as persistent configuration.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <h:commandButton value="Save and Continue" action="#{setupBean.saveSharedPath}"
+                                         styleClass="btn btn-primary"/>
+                        <button type="button" class="btn btn-secondary" onclick="checkApiKeys()">Check API Validity</button>
+                    </div>
+
+                    <div id="apiKeyStatus" class="mt-3 text-sm" style="display: none;"></div>
+                </h:form>
+            </div>
+        </div>
+        
+        <script>
+            function checkApiKeys() {
+                var groqKey = document.getElementById('setupForm:groqKeyInput').value;
+                var nimKey = document.getElementById('setupForm:nimKeyInput').value;
+                var statusDiv = document.getElementById('apiKeyStatus');
+                
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'mt-3 text-sm text-muted';
+                statusDiv.innerHTML = 'Checking API keys...';
+
+                fetch('http://localhost:5000/validate-keys', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ groq_key: groqKey, nim_key: nimKey })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var html = '';
+                    if (data.groq &amp;&amp; data.groq.valid) {
+                        html += '&lt;div class="text-success"&gt;✓ Groq API Key is valid&lt;/div&gt;';
+                    } else if (data.groq) {
+                        html += '&lt;div class="text-danger"&gt;✗ Groq API Key invalid: ' + data.groq.error + '&lt;/div&gt;';
+                    }
+                    if (data.nim &amp;&amp; data.nim.valid) {
+                        html += '&lt;div class="text-success"&gt;✓ NVIDIA NIM API Key is valid&lt;/div&gt;';
+                    } else if (data.nim) {
+                        html += '&lt;div class="text-danger"&gt;✗ NVIDIA NIM API Key invalid: ' + data.nim.error + '&lt;/div&gt;';
+                    }
+                    if (!groqKey &amp;&amp; !nimKey) {
+                        html = '&lt;div class="text-warning"&gt;Please enter at least one API key to check.&lt;/div&gt;';
+                    }
+                    statusDiv.innerHTML = html;
+                })
+                .catch(err => {
+                    statusDiv.className = 'mt-3 text-sm text-danger';
+                    statusDiv.innerHTML = 'Error communicating with backend: ' + err.message;
+                });
+            }
+        </script>
                 </h:form>
             </div>
         </div>

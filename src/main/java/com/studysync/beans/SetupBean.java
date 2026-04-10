@@ -16,6 +16,8 @@ public class SetupBean {
     private ConfigService configService;
 
     private String userPath;
+    private String groqApiKey;
+    private String nimApiKey;
     private String errorMessage;
     private String successMessage;
 
@@ -31,6 +33,8 @@ public class SetupBean {
         }
 
         userPath = configService.getDefaultDataDir();
+        groqApiKey = configService.getGroqApiKey();
+        nimApiKey = configService.getNimApiKey();
     }
 
     public String saveSharedPath() {
@@ -43,7 +47,8 @@ public class SetupBean {
 
         try {
             configService.saveSharedDataDir(normalized);
-            successMessage = "Path saved successfully: " + normalized;
+            configService.saveApiKeys(groqApiKey, nimApiKey);
+            successMessage = "Path and API keys saved successfully.";
             if (!configService.getLastWarningMessage().isEmpty()) {
                 errorMessage = configService.getLastWarningMessage();
             } else {
@@ -51,7 +56,7 @@ public class SetupBean {
             }
             return "/pages/dashboard.xhtml?faces-redirect=true";
         } catch (Exception e) {
-            errorMessage = "Could not save folder path: " + e.getMessage();
+            errorMessage = "Could not save settings: " + e.getMessage();
             successMessage = "";
             return null;
         }
@@ -102,5 +107,21 @@ public class SetupBean {
 
     public void setSuccessMessage(String successMessage) {
         this.successMessage = successMessage;
+    }
+
+    public String getGroqApiKey() {
+        return groqApiKey;
+    }
+
+    public void setGroqApiKey(String groqApiKey) {
+        this.groqApiKey = groqApiKey;
+    }
+
+    public String getNimApiKey() {
+        return nimApiKey;
+    }
+
+    public void setNimApiKey(String nimApiKey) {
+        this.nimApiKey = nimApiKey;
     }
 }

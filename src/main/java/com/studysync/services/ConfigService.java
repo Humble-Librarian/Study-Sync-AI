@@ -25,6 +25,8 @@ public class ConfigService implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final String SHARED_DIR_KEY = "shared_data_dir";
+    private static final String GROQ_API_KEY_KEY = "groq_api_key";
+    private static final String NIM_API_KEY_KEY = "nim_api_key";
     private static final String DEFAULT_SHARED_DIR = "C:/StudySync_Data";
     private static final String CONTEXT_SHARED_DIR = "studysync.data.dir";
     private static final String CONTEXT_DB_URL = "studysync.db.url";
@@ -55,6 +57,14 @@ public class ConfigService implements Serializable {
         return "";
     }
 
+    public String getGroqApiKey() {
+        return readPropertyFromLocalConfig(GROQ_API_KEY_KEY);
+    }
+
+    public String getNimApiKey() {
+        return readPropertyFromLocalConfig(NIM_API_KEY_KEY);
+    }
+
     public synchronized void saveSharedDataDir(String dataDir) throws Exception {
         String normalizedInput = safeTrim(dataDir);
         if (normalizedInput.isEmpty()) {
@@ -82,6 +92,11 @@ public class ConfigService implements Serializable {
         } else {
             lastWarningMessage = "";
         }
+    }
+
+    public void saveApiKeys(String groqKey, String nimKey) throws Exception {
+        savePropertyToLocalConfig(GROQ_API_KEY_KEY, safeTrim(groqKey));
+        savePropertyToLocalConfig(NIM_API_KEY_KEY, safeTrim(nimKey));
     }
 
     public boolean isPathConfigured() {
@@ -193,6 +208,10 @@ public class ConfigService implements Serializable {
     }
 
     private String readFromLocalConfig() {
+        return readPropertyFromLocalConfig(SHARED_DIR_KEY);
+    }
+
+    private String readPropertyFromLocalConfig(String propKey) {
         Path cfg = localConfigPath();
         if (!Files.exists(cfg)) {
             return "";
@@ -201,13 +220,17 @@ public class ConfigService implements Serializable {
         Properties properties = new Properties();
         try (InputStream in = Files.newInputStream(cfg)) {
             properties.load(in);
-            return safeTrim(properties.getProperty(SHARED_DIR_KEY, ""));
+            return safeTrim(properties.getProperty(propKey, ""));
         } catch (IOException ignored) {
             return "";
         }
     }
 
     private void saveToLocalConfig(String value) throws IOException {
+        savePropertyToLocalConfig(SHARED_DIR_KEY, value);
+    }
+
+    private synchronized void savePropertyToLocalConfig(String key, String value) throws IOException {
         Path cfg = localConfigPath();
         Files.createDirectories(cfg.getParent());
 
@@ -218,7 +241,12 @@ public class ConfigService implements Serializable {
             }
         }
 
-        properties.setProperty(SHARED_DIR_KEY, value);
+        if (value.isEmpty()) {
+            properties.remove(key);
+        } else {
+            properties.setProperty(key, value);
+        }
+        
         try (OutputStream out = Files.newOutputStream(cfg)) {
             properties.store(out, "Study Sync AI configuration");
         }
