@@ -45,8 +45,15 @@ def _answer_with_fallback(prompt: str, llm_choice: str) -> str:
             )
 
 
-@app.route("/validate-keys", methods=["POST"])
+@app.route("/validate-keys", methods=["POST", "OPTIONS"])
 def validate_keys():
+    if request.method == "OPTIONS":
+        response = jsonify({})
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
     data = request.json or {}
     groq_key = data.get("groq_key", "").strip()
     nim_key = data.get("nim_key", "").strip()
