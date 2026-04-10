@@ -27,7 +27,7 @@ public class SetupBean {
             return;
         }
 
-        if (configService.isPathConfigured()) {
+        if (configService.isSetupComplete()) {
             redirectToDashboard();
             return;
         }

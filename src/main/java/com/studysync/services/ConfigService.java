@@ -103,6 +103,12 @@ public class ConfigService implements Serializable {
         return !getSharedDataDir().isEmpty();
     }
 
+    public boolean isSetupComplete() {
+        boolean pathReady = isPathConfigured();
+        boolean keysReady = !getGroqApiKey().isEmpty() || !getNimApiKey().isEmpty();
+        return pathReady && keysReady;
+    }
+
     public String resolveSharedDataDir() {
         String configured = getSharedDataDir();
         if (!configured.isEmpty()) {

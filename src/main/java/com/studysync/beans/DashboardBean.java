@@ -57,8 +57,8 @@ public class DashboardBean implements Serializable {
         documents = new ArrayList<>();
         subjects = new ArrayList<>();
 
-        if (configService == null || !configService.isPathConfigured()) {
-            setupMessage = "Shared folder is not configured yet. Complete setup before uploading files.";
+        if (configService == null || !configService.isSetupComplete()) {
+            setupMessage = "Shared folder or API keys are not configured yet. Complete setup before uploading files.";
             return;
         }
 
@@ -155,8 +155,8 @@ public class DashboardBean implements Serializable {
     }
 
     public void deleteDocument(String docName) {
-        if (configService == null || !configService.isPathConfigured()) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", "Shared folder is not configured.");
+        if (configService == null || !configService.isSetupComplete()) {
+            addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", "Setup is not complete.");
             return;
         }
         if (docName == null || docName.trim().isEmpty()) {
@@ -267,7 +267,7 @@ public class DashboardBean implements Serializable {
     }
 
     public boolean isConfigured() {
-        return configService != null && configService.isPathConfigured();
+        return configService != null && configService.isSetupComplete();
     }
 
     public String getPendingDeleteDocName() {
