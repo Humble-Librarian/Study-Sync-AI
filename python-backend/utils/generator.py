@@ -14,17 +14,14 @@ def build_rag_prompt(query: str, retrieved_chunks: List[Dict]) -> str:
     ]
     context = "\n\n---\n\n".join(context_parts)
 
-    return f"""You are a helpful academic assistant.
-Answer the student's question using only the context below.
-If the answer is not in the context, say "I couldn't find that in the document."
-
-CONTEXT:
-{context}
-
-STUDENT QUESTION:
-{query}
-
-ANSWER:"""
+    return (
+        "You are a helpful academic assistant.\n"
+        "Answer the student's question using only the context below.\n"
+        "If the answer is not in the context, say \"I couldn't find that in the document.\"\n\n"
+        f"CONTEXT:\n{context}\n\n"
+        f"STUDENT QUESTION:\n{query}\n\n"
+        "ANSWER:"
+    )
 
 
 def build_flashcards_prompt(retrieved_chunks, easy=3, medium=3, hard=2):
