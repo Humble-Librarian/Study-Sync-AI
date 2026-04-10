@@ -19,7 +19,13 @@
         <ui:include src="/components/upload-component.xhtml" />
 
         <!-- Documents Section -->
-        <h2 class="text-xl fw-bold mb-4">My Documents</h2>
+        <div class="d-flex justify-between align-center mb-4">
+            <h2 class="text-xl fw-bold m-0">My Documents</h2>
+            <h:link outcome="/pages/setup.xhtml" styleClass="btn btn-secondary text-sm" style="padding: 0.5rem 1rem;">
+                <f:param name="edit" value="true" />
+                ⚙️ Settings
+            </h:link>
+        </div>
 
         <h:form id="documentsForm">
             <h:messages globalOnly="true" styleClass="alert mb-4" />

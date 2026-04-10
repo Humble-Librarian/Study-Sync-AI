@@ -27,7 +27,13 @@ public class SetupBean {
             return;
         }
 
-        if (configService.isSetupComplete()) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String editParam = null;
+        if (context != null) {
+            editParam = context.getExternalContext().getRequestParameterMap().get("edit");
+        }
+
+        if (configService.isSetupComplete() && !"true".equals(editParam)) {
             redirectToDashboard();
             return;
         }
