@@ -150,7 +150,6 @@ public class ConfigService implements Serializable {
         }
 
         try (Connection connection = openConnection()) {
-            ensureTableExists(connection);
             try (PreparedStatement ps = connection.prepareStatement(
                     "SELECT config_value FROM app_config WHERE config_key = ? LIMIT 1")) {
                 ps.setString(1, SHARED_DIR_KEY);
@@ -169,7 +168,6 @@ public class ConfigService implements Serializable {
 
     private void saveToDatabase(String value) throws Exception {
         try (Connection connection = openConnection()) {
-            ensureTableExists(connection);
             try (PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO app_config(config_key, config_value) VALUES (?, ?) " +
                             "ON DUPLICATE KEY UPDATE config_value = VALUES(config_value), " +
@@ -178,20 +176,6 @@ public class ConfigService implements Serializable {
                 ps.setString(2, value);
                 ps.executeUpdate();
             }
-        }
-    }
-
-    private void ensureTableExists(Connection connection) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS app_config (" +
-                "id INT PRIMARY KEY AUTO_INCREMENT," +
-                "config_key VARCHAR(100) UNIQUE NOT NULL," +
-                "config_value VARCHAR(500) NOT NULL," +
-                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
-                ")";
-
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute(sql);
         }
     }
 
@@ -204,17 +188,93 @@ public class ConfigService implements Serializable {
             throw new IllegalStateException("studysync.db.url is empty");
         }
 
-        // Load MySQL driver when available on classpath.
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException ignored) {
-            // Driver may still auto-register depending on runtime.
+        } catch (ClassNotFoundException ignored) {}
+
+        try {
+            Connection conn = (dbUser.isEmpty()) ? 
+                DriverManager.getConnection(dbUrl) : 
+                DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            
+            // If connection success, ensure all tables exist
+            ensureAllTablesExist(conn);
+            return conn;
+        } catch (SQLException e) {
+            // Error code 1049 is "Unknown database"
+            if (e.getErrorCode() == 1049) {
+                System.out.println("[ConfigService] Database not found. Bootstrapping...");
+                bootstrapDatabase();
+                // Retry connection once after bootstrap
+                Connection conn = (dbUser.isEmpty()) ? 
+                    DriverManager.getConnection(dbUrl) : 
+                    DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+                ensureAllTablesExist(conn);
+                return conn;
+            }
+            throw e;
+        }
+    }
+
+    private void bootstrapDatabase() throws Exception {
+        String fullUrl = getDbUrl();
+        String dbUser = getDbUser();
+        String dbPassword = getDbPassword();
+        
+        // Extract server root URL (e.g., jdbc:mysql://localhost:3306/) and db name
+        int lastSlash = fullUrl.lastIndexOf("/");
+        int queryParam = fullUrl.indexOf("?");
+        String baseUrl = fullUrl.substring(0, lastSlash + 1);
+        if (queryParam != -1) {
+            baseUrl += fullUrl.substring(queryParam);
+        }
+        
+        String dbName = fullUrl.substring(lastSlash + 1);
+        if (queryParam != -1) {
+            dbName = dbName.substring(0, dbName.indexOf("?"));
         }
 
-        if (dbUser.isEmpty()) {
-            return DriverManager.getConnection(dbUrl);
+        System.out.println("[ConfigService] Connecting to " + baseUrl + " to create " + dbName);
+
+        try (Connection conn = dbUser.isEmpty() ? 
+                DriverManager.getConnection(baseUrl) : 
+                DriverManager.getConnection(baseUrl, dbUser, dbPassword);
+             Statement stmt = conn.createStatement()) {
+            stmt.execute("CREATE DATABASE IF NOT EXISTS " + dbName);
+            System.out.println("[ConfigService] Database '" + dbName + "' created successfully.");
         }
-        return DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+    }
+
+    public void ensureAllTablesExist(Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
+            // 1. app_config
+            stmt.execute("CREATE TABLE IF NOT EXISTS app_config (" +
+                "id INT PRIMARY KEY AUTO_INCREMENT," +
+                "config_key VARCHAR(100) UNIQUE NOT NULL," +
+                "config_value VARCHAR(500) NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" +
+                ")");
+
+            // 2. users
+            stmt.execute("CREATE TABLE IF NOT EXISTS users (" +
+                "  id            INT AUTO_INCREMENT PRIMARY KEY," +
+                "  username      VARCHAR(64) NOT NULL UNIQUE," +
+                "  password_hash VARCHAR(64) NOT NULL," +
+                "  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                ")");
+
+            // 3. documents
+            stmt.execute("CREATE TABLE IF NOT EXISTS documents (" +
+                "  id            INT AUTO_INCREMENT PRIMARY KEY," +
+                "  user_id       INT NOT NULL," +
+                "  name          VARCHAR(255) NOT NULL," +
+                "  subject       VARCHAR(100)," +
+                "  status        VARCHAR(50) DEFAULT 'uploaded'," +
+                "  upload_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "  UNIQUE KEY user_doc (user_id, name)" +
+                ")");
+        }
     }
 
     private String readFromLocalConfig() {

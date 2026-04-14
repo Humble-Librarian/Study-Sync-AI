@@ -34,28 +34,13 @@ public class DocumentService implements Serializable {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            ensureTableExists();
         } catch (ClassNotFoundException e) {
             System.err.println("[DocumentService] Driver not found: " + e.getMessage());
         }
     }
 
-    private void ensureTableExists() {
-        String sql = "CREATE TABLE IF NOT EXISTS documents (" +
-                     "  id            INT AUTO_INCREMENT PRIMARY KEY," +
-                     "  user_id       INT NOT NULL," +
-                     "  name          VARCHAR(255) NOT NULL," +
-                     "  subject       VARCHAR(100)," +
-                     "  status        VARCHAR(50) DEFAULT 'uploaded'," +
-                     "  upload_date   TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                     "  UNIQUE KEY user_doc (user_id, name)" +
-                     ")";
-        try (Connection conn = getConnection();
-             Statement st = conn.createStatement()) {
-            st.execute(sql);
-        } catch (Exception e) {
-            System.err.println("[DocumentService] Could not ensure documents table: " + e.getMessage());
-        }
+    private Connection getConnection() throws Exception {
+        return configService.openConnection();
     }
 
     public List<DbDocument> getDocumentsForUser(int userId) {
@@ -109,10 +94,6 @@ public class DocumentService implements Serializable {
             System.err.println("[DocumentService] Error deleting doc: " + e.getMessage());
             return false;
         }
-    }
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
     }
 
     // Bean Getters/Setters

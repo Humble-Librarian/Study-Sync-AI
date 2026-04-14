@@ -13,28 +13,12 @@ import java.sql.*;
 @ApplicationScoped
 public class UserService {
 
-    private String jdbcUrl;
-    private String dbUser;
-    private String dbPassword;
+    @ManagedProperty(value = "#{configService}")
+    private ConfigService configService;
 
     @PostConstruct
     public void init() {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        if (ctx != null) {
-            javax.faces.context.ExternalContext ext = ctx.getExternalContext();
-            String url  = ext.getInitParameter("studysync.db.url");
-            String user = ext.getInitParameter("studysync.db.user");
-            String pass = ext.getInitParameter("studysync.db.password");
-            jdbcUrl     = (url  != null && !url.trim().isEmpty())  ? url.trim()  : "jdbc:mysql://localhost:3306/StudySync?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            dbUser      = (user != null && !user.trim().isEmpty()) ? user.trim() : "root";
-            dbPassword  = (pass != null)                           ? pass        : "";
-        } else {
-            jdbcUrl    = "jdbc:mysql://localhost:3306/StudySync?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            dbUser     = "root";
-            dbPassword = "";
-        }
-        ensureTableExists();
-        System.out.println("[UserService] SQL Auth is ENABLED.");
+        System.out.println("[UserService] SQL Auth is ENABLED with Self-Healing Bootstrap.");
     }
 
     // ── Public API ──────────────────────────────────────────────────────────────
@@ -84,23 +68,8 @@ public class UserService {
 
     // ── Internal helpers ─────────────────────────────────────────────────────────
 
-    private void ensureTableExists() {
-        String sql = "CREATE TABLE IF NOT EXISTS users (" +
-                     "  id            INT AUTO_INCREMENT PRIMARY KEY," +
-                     "  username      VARCHAR(64) NOT NULL UNIQUE," +
-                     "  password_hash VARCHAR(64) NOT NULL," +
-                     "  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                     ")";
-        try (Connection conn = getConnection();
-             Statement st = conn.createStatement()) {
-            st.execute(sql);
-        } catch (Exception e) {
-            System.err.println("[UserService] Could not ensure users table: " + e.getMessage());
-        }
-    }
-
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
+    private Connection getConnection() throws Exception {
+        return configService.openConnection();
     }
 
     private static String sha256(String input) {
@@ -120,4 +89,8 @@ public class UserService {
     private static boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
+
+    // JSF Getters/Setters
+    public ConfigService getConfigService() { return configService; }
+    public void setConfigService(ConfigService configService) { this.configService = configService; }
 }
