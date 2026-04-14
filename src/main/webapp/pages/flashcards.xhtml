@@ -30,74 +30,199 @@
     </ui:define>
 
     <ui:define name="content">
-        <!-- Configure Deck Card -->
-        <h:form id="configForm">
-            <div class="card" style="margin-bottom: var(--space-6);">
-                <h3 style="margin: 0 0 var(--space-4) 0; font-size: 1.1rem; font-weight: 500;">Configure Your Deck</h3>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 1;">
-                        <h:outputLabel value="Easy" styleClass="form-label" style="font-size: 0.85rem;" />
-                        <h:inputText value="#{flashcardBean.numEasy}" styleClass="form-control"
-                            pt:type="number" pt:min="0" pt:max="12"
-                            style="border-radius: var(--radius-md);" />
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <h:outputLabel value="Medium" styleClass="form-label" style="font-size: 0.85rem;" />
-                        <h:inputText value="#{flashcardBean.numMedium}" styleClass="form-control"
-                            pt:type="number" pt:min="0" pt:max="12"
-                            style="border-radius: var(--radius-md);" />
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <h:outputLabel value="Difficult" styleClass="form-label" style="font-size: 0.85rem;" />
-                        <h:inputText value="#{flashcardBean.numHard}" styleClass="form-control"
-                            pt:type="number" pt:min="0" pt:max="12"
-                            style="border-radius: var(--radius-md);" />
-                    </div>
+        <!-- Master Deck Controls -->
+        <h:form id="deckForm">
+            <div class="card" style="margin-bottom: var(--space-6); display: flex; justify-content: space-between; align-items: center; padding: var(--space-4) var(--space-6);">
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <h:outputLabel value="Select Document" styleClass="text-muted text-xs" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;" />
+                    <h:selectOneMenu value="#{flashcardBean.documentName}" 
+                                    styleClass="form-control"
+                                    style="width: 280px; padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border-light); background: var(--bg-surface); font-weight: 500; cursor: pointer;">
+                        <f:selectItem itemLabel="Choose a PDF..." itemValue="" noSelectionOption="true" />
+                        <f:selectItems value="#{dashboardBean.documents}" var="doc" 
+                                      itemLabel="#{doc.name}" itemValue="#{doc.name}" />
+                        <f:ajax listener="#{flashcardBean.onDocumentChange}" render="@all" />
+                    </h:selectOneMenu>
+                    <p class="text-muted text-sm" style="margin: 0;">
+                        <h:outputText value="#{flashcardBean.cardCount} cards available" rendered="#{not empty flashcardBean.flashcards}" />
+                        <h:outputText value="Study deck not prepared" rendered="#{empty flashcardBean.flashcards and not empty flashcardBean.documentName}" />
+                    </p>
                 </div>
-                <h:commandLink action="#{flashcardBean.regenerate}"
-                    styleClass="btn btn-primary w-100"
-                    style="border-radius: var(--radius-full); padding: var(--space-3); font-size: 1rem; text-decoration: none;">
-                    Generate flashcards
-                    <f:ajax execute="@form" render="flashcardGrid cardCountHeader" />
-                </h:commandLink>
+                
+                <h:panelGroup rendered="#{not flashcardBean.deckPrepared}">
+                    <h:commandLink action="#{flashcardBean.generateFlashcards}" styleClass="btn btn-primary"
+                                 style="border-radius: var(--radius-full); padding: 12px 28px; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 600;">
+                        <span class="material-symbols-outlined" style="font-size: 1.4rem;">auto_awesome</span>
+                        Build Master Study Deck
+                        <f:ajax execute="@form" render="@all" onevent="onFlashcardGenerate" />
+                    </h:commandLink>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{flashcardBean.deckPrepared}">
+                    <h:commandLink action="#{flashcardBean.generateFlashcards}" 
+                                 styleClass="btn"
+                                 style="border-radius: var(--radius-full); padding: 12px 28px; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 600; border: 1px solid var(--border-light); background: var(--bg-surface); color: var(--text-main);"
+                                 onclick="return confirm('This will replace your current deck. Continue?')">
+                        <span class="material-symbols-outlined" style="font-size: 1.4rem;">refresh</span>
+                        Regenerate Master Deck
+                        <f:ajax execute="@form" render="@all" onevent="onFlashcardGenerate" />
+                    </h:commandLink>
+                </h:panelGroup>
             </div>
+
+            <!-- Difficulty Tabs -->
+            <h:panelGroup rendered="#{flashcardBean.deckPrepared}">
+                <div class="filter-tabs" style="margin-bottom: var(--space-6);">
+                    <h:commandLink action="#{flashcardBean.setDifficultyFilter('ALL')}" 
+                                 styleClass="tab-item #{flashcardBean.difficultyFilter == 'ALL' ? 'active' : ''}">
+                        All Cards
+                        <f:ajax render="flashcardGrid deckForm" />
+                    </h:commandLink>
+                    <h:commandLink action="#{flashcardBean.setDifficultyFilter('easy')}" 
+                                 styleClass="tab-item #{flashcardBean.difficultyFilter == 'easy' ? 'active' : ''}">
+                        Easy
+                        <f:ajax render="flashcardGrid deckForm" />
+                    </h:commandLink>
+                    <h:commandLink action="#{flashcardBean.setDifficultyFilter('medium')}" 
+                                 styleClass="tab-item #{flashcardBean.difficultyFilter == 'medium' ? 'active' : ''}">
+                        Medium
+                        <f:ajax render="flashcardGrid deckForm" />
+                    </h:commandLink>
+                    <h:commandLink action="#{flashcardBean.setDifficultyFilter('hard')}" 
+                                 styleClass="tab-item #{flashcardBean.difficultyFilter == 'hard' ? 'active' : ''}">
+                        Hard
+                        <f:ajax render="flashcardGrid deckForm" />
+                    </h:commandLink>
+                </div>
+            </h:panelGroup>
         </h:form>
 
-        <!-- Card Count -->
-        <h:panelGroup id="cardCountHeader">
-            <h:panelGroup rendered="#{flashcardBean.cardCount > 0}">
-                <p class="text-muted text-sm" style="margin-bottom: var(--space-4);">
-                    #{flashcardBean.cardCount} cards generated for: #{flashcardBean.documentName}
-                </p>
-            </h:panelGroup>
-        </h:panelGroup>
 
-        <!-- Flashcard Grid -->
+        <!-- Flashcard Stack Carousel -->
         <h:panelGroup id="flashcardGrid">
-            <div class="flashcard-grid">
-                <ui:repeat value="#{flashcardBean.flashcards}" var="card">
-                    <div class="card flashcard-item">
-                        <div class="flashcard-header">
-                            <span class="badge badge-#{card.difficultyClass}">#{card.difficulty}</span>
-                        </div>
-                        <ui:include src="/components/flashcard.xhtml">
-                            <ui:param name="question" value="#{card.question}" />
-                            <ui:param name="answer" value="#{card.answer}" />
-                            <ui:param name="difficulty" value="#{card.difficulty}" />
-                            <ui:param name="difficultyClass" value="#{card.difficultyClass}" />
-                        </ui:include>
+            <h:panelGroup rendered="#{not empty flashcardBean.flashcards and not flashcardBean.loading}">
+                <div class="flash-stack-container">
+                    <button type="button" class="nav-btn prev-btn" onclick="FlashcardStack.prev()">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+
+                    <div class="flash-stack" id="mainStack">
+                        <ui:repeat value="#{flashcardBean.filteredFlashcards}" var="card" varStatus="status">
+                            <div class="stack-card" data-difficulty="#{card.difficultyClass}">
+                                <ui:include src="/components/flashcard.xhtml">
+                                    <ui:param name="question" value="#{card.question}" />
+                                    <ui:param name="answer" value="#{card.answer}" />
+                                    <ui:param name="difficulty" value="#{card.difficulty}" />
+                                    <ui:param name="difficultyClass" value="#{card.difficultyClass}" />
+                                    <ui:param name="index" value="#{status.index + 1}" />
+                                </ui:include>
+                            </div>
+                        </ui:repeat>
+                        <div class="card-counter" id="stackCounter">0 of 0</div>
                     </div>
-                </ui:repeat>
-            </div>
+
+                    <button type="button" class="nav-btn next-btn" onclick="FlashcardStack.next()">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </h:panelGroup>
 
             <!-- Empty State -->
-            <h:panelGroup rendered="#{empty flashcardBean.flashcards}">
-                <div class="text-center" style="padding: var(--space-8);">
+            <h:panelGroup rendered="#{empty flashcardBean.flashcards and not flashcardBean.loading}">
+                <div class="text-center" style="padding: var(--space-8); background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px dashed var(--border-light); margin-top: var(--space-8);">
                     <span class="material-symbols-outlined" style="font-size: 3rem; opacity:.3; display: block; margin-bottom: var(--space-3);">style</span>
-                    <p class="text-muted">No flashcards yet. Configure your deck above and click Generate!</p>
+                    <p class="text-muted" style="margin: 0;">No study deck prepared yet. Click "Build Master Study Deck" to start.</p>
+                </div>
+            </h:panelGroup>
+
+            <!-- Loading State -->
+            <h:panelGroup rendered="#{flashcardBean.loading}">
+                <div class="text-center" style="padding: var(--space-8); margin-top: var(--space-8);">
+                    <div class="spinner-pulsing" style="margin-bottom: var(--space-4);"></div>
+                    <p class="text-main" style="font-weight: 500;">Scanning document and generating master deck...</p>
+                    <p class="text-muted text-sm">Reasoning through concepts... This can take up to 60s.</p>
                 </div>
             </h:panelGroup>
         </h:panelGroup>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script>//<![CDATA[
+            const FlashcardStack = {
+                currentIndex: 0,
+                cards: [],
+
+                init() {
+                    this.cards = Array.from(document.querySelectorAll('.stack-card'));
+                    this.currentIndex = 0;
+                    this.updateDisplay();
+                },
+
+                next() {
+                    if (this.currentIndex < this.cards.length - 1) {
+                        const current = this.cards[this.currentIndex];
+                        current.classList.add('exit-left');
+                        this.currentIndex++;
+                        this.updateDisplay();
+                    }
+                },
+
+                prev() {
+                    if (this.currentIndex > 0) {
+                        this.currentIndex--;
+                        const current = this.cards[this.currentIndex];
+                        current.classList.remove('exit-left');
+                        this.updateDisplay();
+                    }
+                },
+
+                updateDisplay() {
+                    const counter = document.getElementById('stackCounter');
+                    if (counter) {
+                        counter.innerText = (this.cards.length > 0 ? (this.currentIndex + 1) : 0) + ' of ' + this.cards.length;
+                    }
+
+                    this.cards.forEach((card, i) => {
+                        card.classList.remove('active', 'behind-1', 'behind-2');
+                        
+                        if (i === this.currentIndex) {
+                            card.classList.add('active');
+                            card.classList.remove('exit-left');
+                        } else if (i === this.currentIndex + 1) {
+                            card.classList.add('behind-1');
+                        } else if (i === this.currentIndex + 2) {
+                            card.classList.add('behind-2');
+                        }
+                    });
+                }
+            };
+
+            // Initialize on load
+            document.addEventListener('DOMContentLoaded', () => FlashcardStack.init());
+
+            // Handle Ajax updates
+            function onFlashcardGenerate(data) {
+                if (data.status === 'success') {
+                    // Slight delay to ensure DOM is ready
+                    setTimeout(() => FlashcardStack.init(), 100);
+                }
+            }
+
+            // Hook into all JSF Ajax calls to re-init stack when filters change
+            if (typeof jsf !== 'undefined') {
+                jsf.ajax.addOnEvent(function(data) {
+                    if (data.status === 'success') {
+                        FlashcardStack.init();
+                    }
+                });
+            }
+
+            // Keyboard support
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') FlashcardStack.next();
+                if (e.key === 'ArrowLeft') FlashcardStack.prev();
+            });
+        //]]></script>
     </ui:define>
 </ui:composition>
 

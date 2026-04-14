@@ -40,10 +40,11 @@
 
                 <h:link outcome="/pages/setup.xhtml" styleClass="nav-link">
                     <span class="material-symbols-outlined">settings</span>
+                    <f:param name="edit" value="true" />
                 </h:link>
 
-                <div class="sidebar-bottom profile-menu">
-                    <div class="user-avatar" title="#{userSession.username}">
+                <div class="sidebar-bottom profile-menu" id="profileMenu">
+                    <div class="user-avatar" title="#{userSession.username}" onclick="toggleProfileMenu(event)">
                         <span class="material-symbols-outlined" style="color: var(--text-muted)">person</span>
                     </div>
                     <div class="profile-dropdown">
@@ -53,6 +54,7 @@
                         <h:link outcome="/pages/setup.xhtml" styleClass="dropdown-item">
                             <span class="material-symbols-outlined" style="font-size: 1.2rem;">settings</span>
                             Settings
+                            <f:param name="edit" value="true" />
                         </h:link>
                         <h:form style="margin: 0; padding: 0;">
                             <h:commandLink action="#{loginBean.logout}" styleClass="dropdown-item text-danger">
@@ -88,6 +90,20 @@
             el.setAttribute('data-theme', newTheme);
             localStorage.setItem('studySyncTheme', newTheme);
         }
+
+        function toggleProfileMenu(event) {
+            event.stopPropagation();
+            document.getElementById('profileMenu').classList.toggle('active');
+        }
+
+        window.onclick = function(event) {
+            var menu = document.getElementById('profileMenu');
+            if (menu && menu.classList.contains('active')) {
+                if (!menu.contains(event.target)) {
+                    menu.classList.remove('active');
+                }
+            }
+        };
     //]]></script>
     <ui:insert name="scripts" />
 </h:body>

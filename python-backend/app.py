@@ -7,7 +7,7 @@ from flask import Flask, jsonify, request, send_from_directory
 
 from config import DATA_DIR
 from utils.generator import build_rag_prompt, build_flashcards_prompt
-from utils.parser import parse_toon_flashcards
+from utils.parser import parse_json_flashcards
 from utils.indexer import build_index
 from utils.llm_groq import call_groq
 from utils.llm_nim import call_nim
@@ -25,24 +25,20 @@ def _resolve_data_dir(explicit_data_dir: str) -> str:
 
 def _answer_with_fallback(prompt: str, llm_choice: str) -> str:
     provider = (llm_choice or "groq").strip().lower()
+    chat_model = "llama-3.3-70b-versatile"
 
     if provider == "nim":
-        primary_name, primary_fn = "NIM", call_nim
-        fallback_name, fallback_fn = "Groq", call_groq
-    else:
-        primary_name, primary_fn = "Groq", call_groq
-        fallback_name, fallback_fn = "NIM", call_nim
-
-    try:
-        return primary_fn(prompt)
-    except Exception as primary_err:
         try:
-            return fallback_fn(prompt)
-        except Exception as fallback_err:
-            return (
-                f"Both LLM providers failed. "
-                f"{primary_name}: {primary_err} | {fallback_name}: {fallback_err}"
-            )
+            return call_nim(prompt)
+        except Exception as nim_err:
+            print(f"[FALLBACK LOG] NIM failed: {nim_err}. Using Groq 70B...")
+            return call_groq(prompt, model=chat_model)
+    else:
+        try:
+            return call_groq(prompt, model=chat_model)
+        except Exception as groq_err:
+            print(f"[FALLBACK LOG] Groq failed: {groq_err}. Using NIM...")
+            return call_nim(prompt)
 
 
 @app.route("/validate-keys", methods=["POST", "OPTIONS"])
@@ -121,7 +117,11 @@ def chat():
             )
 
         prompt = build_rag_prompt(user_query, chunks)
+        print(f"[CHAT LOG] Calling LLM ({llm_choice})...")
+        import time
+        t0 = time.time()
         answer = _answer_with_fallback(prompt, llm_choice)
+        print(f"[CHAT LOG] Response received in {time.time()-t0:.2f}s")
 
         source_pages = [
             {
@@ -150,41 +150,88 @@ def chat():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+def is_administrative(text: str) -> bool:
+    """Heuristic to detect administrative/syllabus content."""
+    keywords = [
+        "faculty name", "subject code", "course code", "teaching department",
+        "marking scheme", "internal marks", "external marks", "office hours",
+        "prerequisite", "credits:", "l-t-p", "academic year", "grading policy",
+        "syllabus cover", "course objectives", "reference books", "unit-wise syllabus"
+    ]
+    text_lower = text.lower()
+    matches = sum(1 for kw in keywords if kw in text_lower)
+    return matches >= 2 # If 2 or more keywords match, it's likely admin info
+
 @app.route("/flashcards", methods=["GET"])
 def flashcards():
     doc_name = request.args.get("docName", "").strip()
     llm_choice = request.args.get("llm_choice", "groq")
     data_dir = _resolve_data_dir(request.args.get("data_dir", ""))
+    force = request.args.get("force", "false").lower() == "true"
 
     if not doc_name:
         return jsonify({"success": False, "error": "Missing docName parameter."}), 400
 
-    try:
-        easy = int(request.args.get("easy", 3))
-        medium = int(request.args.get("medium", 3))
-        hard = int(request.args.get("hard", 2))
-    except ValueError:
-        easy, medium, hard = 3, 3, 2
+    # Determining cache path (preserving subdirectories for isolation)
+    base = doc_name
+    if base.lower().endswith(".pdf"):
+        base = base[:-4]
+        
+    indices_dir = os.path.join(data_dir, "indices") if data_dir else os.path.join(os.path.abspath(DATA_DIR), "indices")
+    cache_path = os.path.join(indices_dir, f"{base}.flashcards.json")
+
+    # Return cached deck if available and not forced
+    if os.path.exists(cache_path) and not force:
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                return jsonify(json.load(f))
+        except Exception:
+            pass # Fallback to generation if cache is corrupt
 
     try:
         pages = build_index(doc_name, data_dir=data_dir, llm_choice=llm_choice)
         if not pages:
             return jsonify({"success": False, "error": "No text found in document."}), 404
 
-        # Sample a few pages so the flashcards are diverse, but limit to 10 for context size
-        sample_size = min(10, len(pages))
-        sampled_pages = random.sample(pages, sample_size)
+        # Adaptive syllabus skip: Skip first 15% or at least 3 pages, max 10
+        skip_count = min(max(3, int(len(pages) * 0.15)), 10)
+        meaningful_pages = pages[skip_count:] if len(pages) > skip_count else pages
+
+        # Heuristic filtering: Drop any pages that look like admin info
+        academic_pages = [p for p in meaningful_pages if not is_administrative(p['text'])]
+        
+        # Fallback to meaningful_pages if filtering was too aggressive
+        if len(academic_pages) < 5:
+            academic_pages = meaningful_pages
+
+        step = max(1, len(academic_pages) // 15)
+        sampled_pages = academic_pages[::step][:15]
         sampled_pages.sort(key=lambda x: x["page"])
 
-        prompt = build_flashcards_prompt(sampled_pages, easy=easy, medium=medium, hard=hard)
-        raw = _answer_with_fallback(prompt, llm_choice)
+        # Create balanced set: 5 Easy, 5 Medium, 5 Hard
+        prompt = build_flashcards_prompt(sampled_pages, easy=5, medium=5, hard=5)
+        
+        # Flashcards require higher token counts for complex academic decks
+        if llm_choice.lower() == "groq":
+            raw = call_groq(prompt, max_tokens=2048, temperature=0.3, model="llama-3.1-8b-instant")
+        else:
+            raw = _answer_with_fallback(prompt, llm_choice)
 
-        flashcards_data = parse_toon_flashcards(raw)
+        flashcards_data = parse_json_flashcards(raw)
         if not flashcards_data:
-            raise ValueError("Parser returned no flashcards from LLM output.")
+            return jsonify({"success": False, "error": "LLM failed to generate valid JSON flashcards. Please try again."}), 500
+        
+        # Save to cache
+        os.makedirs(indices_dir, exist_ok=True)
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(flashcards_data, f, indent=2)
+
         return jsonify(flashcards_data)
 
     except Exception as e:
+        import traceback
+        print(f"[INTERNAL ERROR] Flashcard generation failed: {str(e)}")
+        traceback.print_exc()
         return jsonify({"success": False, "error": str(e)}), 500
 
 

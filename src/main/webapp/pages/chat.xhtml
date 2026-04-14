@@ -46,23 +46,9 @@
 
             <!-- Right Panel (Chat Interaction) -->
             <div class="chat-container card" style="flex: 1; min-width: 300px; position: relative; display: flex; flex-direction: column; height: 100%; border-radius: var(--radius-lg); padding: 0; overflow: hidden;">
-                <!-- PDF Thumbnail Strip (from source pages/images) -->
-                <h:panelGroup rendered="#{chatBean.showSources}" styleClass="chat-previews" style="padding: var(--space-2); background: var(--bg-elevated); border-bottom: 1px solid var(--border-light);">
-                    <div style="display: flex; gap: var(--space-2); overflow-x: auto;">
-                        <ui:repeat value="#{chatBean.sourcePages}" var="src">
-                            <h:panelGroup rendered="#{not empty src.images}">
-                                <ui:repeat value="#{src.images}" var="imgPath">
-                                    <img src="http://localhost:5000/#{imgPath}"
-                                         alt="Page #{src.page}"
-                                         style="height: 80px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); object-fit: cover; cursor: pointer;" />
-                                </ui:repeat>
-                            </h:panelGroup>
-                        </ui:repeat>
-                    </div>
-                </h:panelGroup>
 
                 <!-- Chat Messages -->
-                <div class="chat-messages" id="chatMessages" style="flex: 1; overflow-y: auto; padding: var(--space-4); padding-bottom: 80px;">
+                <div class="chat-messages" id="chatHistory" style="flex: 1; overflow-y: auto; padding: var(--space-4); padding-bottom: 80px;">
                     <!-- User question bubble -->
                     <h:panelGroup rendered="#{not empty chatBean.userQuery}">
                         <div style="display: flex; justify-content: flex-end;">
@@ -80,7 +66,16 @@
                     <!-- Main Answer -->
                     <h:panelGroup rendered="#{not empty chatBean.answer}">
                         <div class="chat-bubble" style="background: var(--bg-elevated); border: 1px solid var(--border-light); padding: var(--space-4); border-radius: var(--radius-lg); border-bottom-left-radius: var(--radius-sm); margin-bottom: var(--space-4);">
-                            <span style="font-weight: 600; display: block; margin-bottom: var(--space-2); color: var(--text-main);">AI Answer</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2);">
+                                <span style="font-weight: 600; color: var(--text-main);">AI Answer</span>
+                                <h:panelGroup rendered="#{chatBean.hasImages()}">
+                                    <a href="#" onclick="openReferenceGallery(); return false;" 
+                                       style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--primary-main); text-decoration: none; padding: 4px 12px; border: 1px solid var(--primary-main); border-radius: 20px; transition: all 0.2s;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">perm_media</span>
+                                        References
+                                    </a>
+                                </h:panelGroup>
+                            </div>
                             <p style="margin: 0; line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap; color: var(--text-main);">#{chatBean.answer}</p>
                         </div>
                     </h:panelGroup>
@@ -132,17 +127,26 @@
                             </div>
 
                             <!-- Context depth -->
-                            <div class="chat-input-group" style="display: none;">
-                                <!-- Hid context depth to save space, retaining binding -->
-                                <h:inputText id="topK" value="#{chatBean.topK}" styleClass="chat-number-input" />
+                            <div class="chat-input-group" title="Context Depth (Number of sources to retrieve)">
+                                <span class="material-symbols-outlined icon-muted" style="font-size: 1.1rem;">layers</span>
+                                <h:inputText id="topK" value="#{chatBean.topK}" styleClass="chat-number-input" 
+                                             style="width: 35px; text-align: center; border: none; background: transparent; color: var(--text-main); font-weight: 500;">
+                                    <f:passThroughAttribute name="type" value="number" />
+                                    <f:passThroughAttribute name="min" value="1" />
+                                    <f:passThroughAttribute name="max" value="10" />
+                                </h:inputText>
                             </div>
+
+                            <!-- Divider -->
+                            <div class="chat-divider"></div>
 
                             <!-- Question input -->
                             <h:inputText id="question" value="#{chatBean.userQuery}" styleClass="chat-text-input" placeholder="Ask about #{chatBean.docName}..." />
 
                             <!-- Send Button -->
-                            <h:commandLink action="#{chatBean.submitQuery}" styleClass="chat-send-btn" title="Send">
+                            <h:commandLink action="#{chatBean.submitQuery}" styleClass="chat-send-btn" title="Send" id="sendBtn">
                                 <span class="material-symbols-outlined">send</span>
+                                <f:ajax execute="@form" render="@all" onevent="onChatResponse" />
                             </h:commandLink>
                         </div>
                     </h:form>
@@ -150,6 +154,60 @@
 
             </div>
         </div>
+
+        <!-- Image Lightbox (Single View) -->
+        <div id="imageModal" class="image-modal" onclick="this.style.display='none'">
+            <span class="close-modal">×</span>
+            <img class="modal-content" id="imgFullView" />
+            <div id="modalCaption"></div>
+        </div>
+
+        <!-- Reference Gallery (Grid View) -->
+        <div id="galleryModal" class="image-modal" style="padding: var(--space-8);">
+            <div class="gallery-container" style="background: var(--bg-surface); padding: var(--space-6); border-radius: var(--radius-lg); max-width: 900px; width: 95%; max-height: 85vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-6); border-bottom: 1px solid var(--border-light); padding-bottom: var(--space-4);">
+                    <h3 style="margin: 0; color: var(--text-main);">Reference Images</h3>
+                    <span style="cursor: pointer; font-size: 1.5rem; color: var(--text-muted);" onclick="document.getElementById('galleryModal').style.display='none'">×</span>
+                </div>
+                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-4);">
+                    <ui:repeat value="#{chatBean.sourcePages}" var="src">
+                        <ui:repeat value="#{src.images}" var="imgPath">
+                            <div class="gallery-item" style="cursor: pointer; position: relative;" onclick="openImageModal('http://localhost:5000/#{imgPath}?data_dir=#{chatBean.configService.resolveSharedDataDir()}', 'Page #{src.page}')">
+                                <img src="http://localhost:5000/#{imgPath}?data_dir=#{chatBean.configService.resolveSharedDataDir()}" 
+                                     style="width: 100%; height: 150px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-light);" />
+                                <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">Page #{src.page}</div>
+                            </div>
+                        </ui:repeat>
+                    </ui:repeat>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script>//<![CDATA[
+            function onChatResponse(data) {
+                // Done - auto-persistence removed
+            }
+
+            function openImageModal(src, alt) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('imgFullView');
+                const captionText = document.getElementById('modalCaption');
+                
+                modal.style.display = "flex";
+                modalImg.src = src;
+                captionText.innerHTML = alt || "Reference Image";
+                
+                // Keep gallery open if it was open
+                document.getElementById('galleryModal').style.zIndex = "1999"; 
+            }
+
+            function openReferenceGallery() {
+                document.getElementById('galleryModal').style.display = "flex";
+                document.getElementById('galleryModal').style.zIndex = "2000";
+            }
+        //]]></script>
     </ui:define>
 </ui:composition>
 

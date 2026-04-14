@@ -46,13 +46,18 @@ def _resolve_dirs(data_dir: str = ""):
 
 
 def _index_path(doc_name: str, indices_dir: str) -> str:
-    base = os.path.splitext(os.path.basename(doc_name))[0]
+    # Preserve subdirectories in the index files
+    base = doc_name
+    if base.lower().endswith(".pdf"):
+        base = base[:-4]
     return os.path.join(indices_dir, f"{base}.index.json")
 
 
 def build_index(doc_name: str, force: bool = False, data_dir: str = "", llm_choice: str = "groq") -> List[Dict]:
     pdfs_dir, indices_dir, base_candidates = _resolve_dirs(data_dir)
-    doc_file = os.path.basename(doc_name)
+    
+    # Do NOT strip dirname here, we want namespaced paths e.g. "1/lecture.pdf"
+    doc_file = doc_name
 
     selected_pdfs_dir = pdfs_dir
     selected_indices_dir = indices_dir
@@ -70,11 +75,12 @@ def build_index(doc_name: str, force: bool = False, data_dir: str = "", llm_choi
     if not os.path.exists(pdf_path):
         tried = [os.path.join(base, "pdfs", doc_file) for base in base_candidates]
         raise FileNotFoundError(
-            "PDF not found. Tried paths: " + " | ".join(tried[:6])
+            f"PDF not found. Tried paths: {' | '.join(tried[:6])}"
         )
 
-    os.makedirs(selected_indices_dir, exist_ok=True)
+    # Ensure the parent directory for the index exists (e.g., indices/1/)
     idx_path = _index_path(doc_name, selected_indices_dir)
+    os.makedirs(os.path.dirname(idx_path), exist_ok=True)
 
     if os.path.exists(idx_path) and not force:
         with open(idx_path, "r", encoding="utf-8") as f:
@@ -126,20 +132,27 @@ def build_index(doc_name: str, force: bool = False, data_dir: str = "", llm_choi
             if text or page_images_data:
                 pages.append({"page": i, "text": text, "images": page_images_data})
 
-    # Execute all NIM API calls concurrently
+    # Execute all NIM API calls with controlled concurrency to avoid 429 Rate Limits
     if vision_tasks:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        print(f"[INDEX LOG] Analyzing {len(vision_tasks)} images with NIM Vision...")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             future_to_img_data = {
                 executor.submit(call_nim_vision, task[0], task[1]): task[2]
                 for task in vision_tasks
             }
-            for future in concurrent.futures.as_completed(future_to_img_data):
-                img_data = future_to_img_data[future]
-                try:
-                    description = future.result()
-                    img_data["description"] = description
-                except Exception as e:
-                    img_data["description"] = f"Image transcription failed: {str(e)}"
+            try:
+                for future in concurrent.futures.as_completed(future_to_img_data, timeout=300):
+                    img_data = future_to_img_data[future]
+                    try:
+                        description = future.result()
+                        img_data["description"] = description
+                    except Exception as e:
+                        img_data["description"] = f"Image transcription failed: {str(e)}"
+            except concurrent.futures.TimeoutError:
+                # If the entire process times out, mark remaining futures as timed out
+                for future, img_data in future_to_img_data.items():
+                    if not future.done():
+                        img_data["description"] = "Image transcription timed out (batch wait exceeded)."
 
     with open(idx_path, "w", encoding="utf-8") as f:
         json.dump(pages, f, ensure_ascii=False, indent=2)

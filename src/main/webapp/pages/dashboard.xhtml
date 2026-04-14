@@ -72,7 +72,7 @@
                             </h:link>
                         </div>
                         <h:commandButton value="Delete" styleClass="btn" style="font-size:0.8rem; padding:6px; background: var(--danger-bg); color: var(--danger); border-radius:var(--radius-full);"
-                            onclick="return confirm('Delete #{doc.name}?');"
+                            onclick="localStorage.removeItem('studySync_context_#{doc.name}'); return confirm('Delete #{doc.name}?');"
                             action="#{dashboardBean.deleteSelectedDocument}">
                             <f:setPropertyActionListener target="#{dashboardBean.pendingDeleteDocName}" value="#{doc.name}" />
                             <f:param name="docNameToDelete" value="#{doc.name}" />

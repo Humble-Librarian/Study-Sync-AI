@@ -1,29 +1,47 @@
+import json
+import re
+
 _DIFFICULTY_MAP = {"E": "easy", "M": "medium", "H": "hard"}
 
-
-def parse_toon_flashcards(raw: str) -> list[dict]:
-    """Parse TOON-format flashcard output into a list of dicts.
-
-    Expected LLM output (after the header line):
-        cards[N]{question,answer,difficulty}:
-        <question>,<answer>,<E|M|H>
-        ...
-
-    Returns:
-        List of dicts with keys: question, answer, difficulty
+def parse_json_flashcards(raw: str) -> list[dict]:
+    """Parse JSON flashcard output into a list of dicts.
+    
+    Handles raw JSON or JSON wrapped in markdown code blocks.
     """
-    cards = []
-    for line in raw.splitlines():
-        line = line.strip()
-        # Skip blank lines and the TOON header line
-        if not line or line.startswith("cards["):
-            continue
-        parts = line.split(",", 2)
-        if len(parts) != 3:
-            continue
-        question, answer, diff_code = (p.strip() for p in parts)
-        difficulty = _DIFFICULTY_MAP.get(diff_code.upper())
-        if difficulty is None:
-            continue
-        cards.append({"question": question, "answer": answer, "difficulty": difficulty})
-    return cards
+    try:
+        # Clean up possible markdown code blocks
+        clean_json = raw.strip()
+        if "```" in clean_json:
+            match = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", clean_json)
+            if match:
+                clean_json = match.group(1).strip()
+
+        data = json.loads(clean_json)
+        
+        # Adjust for possible root wrappers (e.g., {"cards": [...]})
+        if isinstance(data, dict):
+            for key in ["cards", "flashcards"]:
+                if key in data and isinstance(data[key], list):
+                    data = data[key]
+                    break
+        
+        if not isinstance(data, list):
+            return []
+
+        # Standardize fields and map difficulty
+        standardized = []
+        for item in data:
+            q = item.get("question") or item.get("q")
+            a = item.get("answer") or item.get("a")
+            d = (item.get("difficulty") or item.get("d") or "M").upper()
+            
+            if q and a:
+                standardized.append({
+                    "question": q.strip(),
+                    "answer": a.strip(),
+                    "difficulty": _DIFFICULTY_MAP.get(d, "medium")
+                })
+        return standardized
+
+    except Exception:
+        return []

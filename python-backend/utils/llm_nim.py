@@ -17,6 +17,8 @@ def _get_client() -> OpenAI:
         _client = OpenAI(
             base_url="https://integrate.api.nvidia.com/v1",
             api_key=key,
+            timeout=60.0,
+            max_retries=1
         )
         _client_key = key
     return _client
@@ -24,39 +26,52 @@ def _get_client() -> OpenAI:
 
 def call_nim(
     prompt: str,
-    model: str = "meta/llama3-70b-instruct",
-    max_tokens: int = 512,
+    model: str = "meta/llama-3.1-70b-instruct",
+    max_tokens: int = 1024,
     temperature: float = 0.3,
 ) -> str:
-    client = _get_client()
-    response = client.chat.completions.create(
-        model=model,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=max_tokens,
-        temperature=temperature,
-    )
-    return (response.choices[0].message.content or "").strip()
-
-def call_nim_vision(prompt: str, base64_image: str) -> str:
-    client = _get_client()
     try:
+        client = _get_client()
         response = client.chat.completions.create(
-            model="meta/llama-3.2-11b-vision-instruct",
-            messages=[{
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{base64_image}",
-                        },
-                    },
-                ],
-            }],
-            max_tokens=512,
-            temperature=0.2,
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=temperature,
         )
         return (response.choices[0].message.content or "").strip()
     except Exception as e:
-        return f"Image transcription failed: {str(e)}"
+        print(f"[NIM LOG] API call failed: {str(e)}")
+        raise
+
+def call_nim_vision(prompt: str, base64_image: str) -> str:
+    import time
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            client = _get_client()
+            response = client.chat.completions.create(
+                model="meta/llama-3.2-11b-vision-instruct",
+                messages=[{
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}",
+                            },
+                        },
+                    ],
+                }],
+                max_tokens=512,
+                temperature=0.2,
+            )
+            return (response.choices[0].message.content or "").strip()
+        except Exception as e:
+            if "429" in str(e) or "timeout" in str(e).lower():
+                if attempt < max_retries - 1:
+                    print(f"[NIM LOG] Rate limit/timeout hit. Retrying vision call (Attempt {attempt+2}/{max_retries})...")
+                    time.sleep(2) # Wait longer before retry
+                    continue
+            return f"Image transcription failed: {str(e)}"
+    return "Image transcription failed: Max retries exceeded."

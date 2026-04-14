@@ -45,7 +45,7 @@ public class RagService {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(60_000);
-        connection.setReadTimeout(300_000);
+        connection.setReadTimeout(600_000); // Increased to 10 minutes for indexing heavy documents
 
         int responseCode = connection.getResponseCode();
         InputStream responseStream = responseCode >= 200 && responseCode < 300
@@ -76,7 +76,7 @@ public class RagService {
         return json;
     }
 
-    public JSONArray generateFlashcards(String docName, String llmChoice, int easy, int medium, int hard) throws Exception {
+    public JSONArray generateFlashcards(String docName, String llmChoice, int easy, int medium, int hard, boolean force) throws Exception {
         if (isBlank(docName)) {
             return new JSONArray();
         }
@@ -89,7 +89,8 @@ public class RagService {
                 + "?docName=" + URLEncoder.encode(docName, StandardCharsets.UTF_8.name())
                 + "&llm_choice=" + URLEncoder.encode(selectedLlm, StandardCharsets.UTF_8.name())
                 + "&data_dir=" + URLEncoder.encode(dataDir, StandardCharsets.UTF_8.name())
-                + "&easy=" + easy + "&medium=" + medium + "&hard=" + hard;
+                + "&easy=" + easy + "&medium=" + medium + "&hard=" + hard
+                + "&force=" + force;
 
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");

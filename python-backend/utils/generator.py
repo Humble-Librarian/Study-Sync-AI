@@ -24,27 +24,36 @@ def build_rag_prompt(query: str, retrieved_chunks: List[Dict]) -> str:
     )
 
 
-def build_flashcards_prompt(retrieved_chunks, easy=3, medium=3, hard=2):
+def build_flashcards_prompt(retrieved_chunks, easy=5, medium=5, hard=5):
     context = _build_context(retrieved_chunks)
     total = easy + medium + hard
-    return f"""You are an expert flashcard author. Generate exactly {total} flashcards from the context below.
+    return f"""You are an expert academic flashcard author for higher education. 
+Generate exactly {total} flashcards based on the context provided.
 
-DIFFICULTY:
-E=easy: direct recall (definitions, facts, names)
-M=medium: conceptual (explain why/how, cause/effect)
-H=hard: synthesis (compare, apply, infer across ideas)
+DIFFICULTY GUIDELINES:
+- E (Easy): Direct recall of specific definitions, technical names, or core parameters.
+- M (Medium): Conceptual checks. Requires explaining "why" or "how" or identifying relationships.
+- H (Hard): Advanced synthesis. Requires applying a principle to a new scenario or inferring results across multiple sections.
 
-QUALITY:
-- Questions must be self-contained and unambiguous
-- Answers: 1-2 sentences, no filler
-- No yes/no questions
-- Do not copy sentences verbatim from the text
+STRICT CONTENT RULES:
+1. FOCUS ONLY on technical, academic, or core subject matter.
+2. ABSOLUTELY FORBIDDEN: Do not generate questions about faculty names, subject codes, grading, schedules, or departmental info.
+3. If a section of text is purely administrative, skip it and focus on technical content elsewhere.
+4. Each question MUST be unambiguous and self-contained.
+5. ANSWERS must be 1-2 sentences of precise, high-quality explanation. No filler.
 
-COUNT (must be exact): {easy}E {medium}M {hard}H
+OUTPUT FORMAT:
+Return a RAW JSON array of objects. No preamble, no markdown wrappers, just the data.
+Required keys: "question", "answer", "difficulty" (use "E", "M", or "H")
 
-OUTPUT — TOON format, raw, no markdown, no preamble:
-cards[{total}]{{question,answer,difficulty}}:
-<question>,<answer>,<E|M|H>
+JSON SCHEMA EXAMPLE:
+[
+  {{
+    "question": "What is the primary function of a transformer in a power system?",
+    "answer": "To step up or step down voltage levels while maintaining power frequency, facilitating efficient long-distance transmission.",
+    "difficulty": "E"
+  }}
+]
 
 CONTEXT:
 {context}"""

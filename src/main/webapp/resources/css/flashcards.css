@@ -1,21 +1,42 @@
-/* Flashcard Styles - Dual Theme Compatible */
+/* Flashcard Styles - Premium Stacked Carousel */
 
-.flashcard-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
+.flash-stack-container {
+    padding: var(--space-8) 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    perspective: 1200px;
+    min-height: 450px;
+    position: relative;
+    user-select: none;
 }
 
-@media (max-width: 992px) {
-    .flashcard-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 576px) {
-    .flashcard-grid { grid-template-columns: 1fr; }
+.flash-stack {
+    position: relative;
+    width: 500px;
+    height: 320px;
+    transform-style: preserve-3d;
 }
 
+.stack-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform-origin: center center;
+}
+
+/* Base card styles (restored) */
 .flashcard {
     perspective: 1000px;
-    height: 260px;
+    height: 100%;
+    width: 100%;
     cursor: pointer;
     outline: none;
 }
@@ -41,17 +62,10 @@
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-4);
+    padding: var(--space-8);
     background: var(--bg-surface);
     border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-soft);
-    transition: box-shadow 0.2s ease;
-}
-
-.flashcard-front {
-    background: var(--bg-surface);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 }
 
 .flashcard-back {
@@ -59,54 +73,143 @@
     background: var(--bg-elevated);
 }
 
-.flashcard:hover .flashcard-front,
-.flashcard:hover .flashcard-back {
-    box-shadow: var(--shadow-card);
-    border-color: var(--primary-main);
+/* Visibility States (Refined) */
+.stack-card.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 100;
+    transform: translateZ(0) scale(1);
+    filter: blur(0);
 }
+
+.stack-card.behind-1 {
+    opacity: 0.8;
+    visibility: visible;
+    z-index: 90;
+    transform: translateY(-25px) translateZ(-150px) scale(0.95);
+    filter: blur(1.5px);
+}
+
+.stack-card.behind-2 {
+    opacity: 0.4;
+    visibility: visible;
+    z-index: 80;
+    transform: translateY(-50px) translateZ(-300px) scale(0.9);
+    filter: blur(3px);
+}
+
+/* Swipe Left/Right exiting animations */
+.stack-card.exit-left {
+    transform: translateX(-150%) rotate(-15deg) translateZ(0) scale(0.8);
+    opacity: 0;
+}
+
+.stack-card.exit-right {
+    transform: translateX(150%) rotate(15deg) translateZ(0) scale(0.8);
+    opacity: 0;
+}
+
+/* Nav Controls */
+.nav-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    z-index: 150;
+}
+
+.nav-btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--primary-main);
+    color: var(--primary-main);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-soft);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+.nav-btn span {
+    font-size: 2rem;
+}
+
+/* Filter Tabs Refinement */
+.filter-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    padding: var(--space-4) 0;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: var(--space-2);
+    background: rgba(0,0,0,0.03);
+    padding: 6px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-light);
+}
+
+.tab-item {
+    padding: 10px 28px;
+    border-radius: var(--radius-full);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+}
+
+.tab-item:hover {
+    color: var(--text-main);
+}
+
+.tab-item.active {
+    background: var(--bg-surface);
+    color: var(--primary-main);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Difficulty Badges */
+.badge-easy { background: #e6fffa; color: #2c7a7b; }
+.badge-medium { background: #fffaf0; color: #b7791f; }
+.badge-hard { background: #fff5f5; color: #c53030; }
 
 .flashcard-badge {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-}
-
-.flashcard-label {
-    font-size: 0.7rem;
-    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: var(--space-3);
+    letter-spacing: 0.5px;
 }
 
-.flashcard-question {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text-main);
-    line-height: 1.4;
-    margin: 0;
-}
-
-.flashcard-answer {
-    font-size: 0.9rem;
-    color: var(--text-main);
-    line-height: 1.7;
-    margin: 0;
-}
-
-.flashcard-hint {
+/* Card Counter */
+.card-counter {
     position: absolute;
-    bottom: var(--space-3);
-    font-size: 0.7rem;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
     color: var(--text-muted);
-    margin: 0;
-    opacity: 0.7;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
-/* Staggered entry animations */
-.flashcard:nth-child(1) { animation-delay: 0.05s; }
-.flashcard:nth-child(2) { animation-delay: 0.1s; }
-.flashcard:nth-child(3) { animation-delay: 0.15s; }
-.flashcard:nth-child(4) { animation-delay: 0.2s; }
-.flashcard:nth-child(5) { animation-delay: 0.25s; }
-.flashcard:nth-child(6) { animation-delay: 0.3s; }
+[data-theme='dark'] .tab-item.active {
+    background: var(--bg-elevated);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+[data-theme='dark'] .filter-tabs {
+    background: rgba(255,255,255,0.05);
+}

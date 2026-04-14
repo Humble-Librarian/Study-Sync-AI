@@ -131,6 +131,10 @@ public class ConfigService implements Serializable {
         return Paths.get(resolveSharedDataDir(), "indices").toString();
     }
 
+    public String getImagesDir() {
+        return Paths.get(resolveSharedDataDir(), "images").toString();
+    }
+
     public String getLastWarningMessage() {
         return lastWarningMessage;
     }
@@ -262,15 +266,15 @@ public class ConfigService implements Serializable {
         return Paths.get(System.getProperty("user.home"), ".studysync", "app-config.properties");
     }
 
-    private String getDbUrl() {
+    public String getDbUrl() {
         return safeTrim(getContextParam(CONTEXT_DB_URL));
     }
 
-    private String getDbUser() {
+    public String getDbUser() {
         return safeTrim(getContextParam(CONTEXT_DB_USER));
     }
 
-    private String getDbPassword() {
+    public String getDbPassword() {
         return safeTrim(getContextParam(CONTEXT_DB_PASSWORD));
     }
 

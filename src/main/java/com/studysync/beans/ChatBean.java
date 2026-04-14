@@ -1,6 +1,7 @@
 package com.studysync.beans;
 
 import com.studysync.services.RagService;
+import com.studysync.services.ConfigService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -24,6 +25,12 @@ public class ChatBean implements Serializable {
     @ManagedProperty(value = "#{ragService}")
     private RagService ragService;
 
+    @ManagedProperty(value = "#{configService}")
+    private ConfigService configService;
+
+    @ManagedProperty(value = "#{userSession}")
+    private UserSession userSession;
+
     private String docName;
     private String userQuery = "";
     private String answer = "";
@@ -46,6 +53,11 @@ public class ChatBean implements Serializable {
     }
 
     public void submitQuery() {
+        if (userSession == null || !userSession.isLoggedIn()) {
+            errorMessage = "Please log in to use the chat.";
+            return;
+        }
+
         if (isBlank(docName)) {
             String docFromParam = FacesContext.getCurrentInstance()
                     .getExternalContext()
@@ -73,7 +85,10 @@ public class ChatBean implements Serializable {
         }
 
         try {
-            JSONObject result = ragService.queryRag(docName, userQuery.trim(), topK, llmChoice);
+            // Apply user isolation prefix for the backend
+            String namespacedDoc = userSession.getUserId() + "/" + docName;
+            
+            JSONObject result = ragService.queryRag(namespacedDoc, userQuery.trim(), topK, llmChoice);
             if (result.optBoolean("success", false)) {
                 answer = result.optString("answer", "");
                 errorMessage = "";
@@ -135,6 +150,22 @@ public class ChatBean implements Serializable {
         this.ragService = ragService;
     }
 
+    public com.studysync.services.ConfigService getConfigService() {
+        return configService;
+    }
+
+    public void setConfigService(ConfigService configService) {
+        this.configService = configService;
+    }
+
+    public UserSession getUserSession() {
+        return userSession;
+    }
+
+    public void setUserSession(UserSession userSession) {
+        this.userSession = userSession;
+    }
+
     public String getDocName() {
         return docName;
     }
@@ -144,11 +175,15 @@ public class ChatBean implements Serializable {
     }
 
     public String getEncodedDocName() {
-        if (isBlank(docName)) {
+        if (isBlank(docName) || userSession == null) {
             return "";
         }
         try {
-            return URLEncoder.encode(docName, StandardCharsets.UTF_8.name()).replace("+", "%20");
+            // Prepend UserID for namespaced access in the viewer and local-pdf servlet
+            String namespacedPath = userSession.getUserId() + "/" + docName;
+            return URLEncoder.encode(namespacedPath, StandardCharsets.UTF_8.name())
+                    .replace("+", "%20")
+                    .replace("%2F", "/"); // Keep the slash so the servlet sees it as a path segment
         } catch (Exception e) {
             return docName;
         }
@@ -200,6 +235,16 @@ public class ChatBean implements Serializable {
 
     public void setTopK(int topK) {
         this.topK = topK;
+    }
+
+    public boolean hasImages() {
+        if (sourcePages == null) return false;
+        for (SourcePage sp : sourcePages) {
+            if (sp.getImages() != null && !sp.getImages().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<SourcePage> getSourcePages() {

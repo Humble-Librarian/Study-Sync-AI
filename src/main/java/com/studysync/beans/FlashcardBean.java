@@ -36,65 +36,89 @@ public class FlashcardBean implements Serializable {
     @ManagedProperty(value = "#{ragService}")
     private RagService ragService;
 
+    @ManagedProperty(value = "#{userSession}")
+    private UserSession userSession;
+
     private List<Flashcard> flashcards = new ArrayList<>();
     private String documentName = "";
     private int documentId;
     private boolean loading = false;
 
-    private int numEasy = 3;
-    private int numMedium = 3;
-    private int numHard = 2;
+    private String difficultyFilter = "ALL";
+    private boolean deckPrepared = false;
 
     @PostConstruct
     public void init() {
         refreshDocumentSelectionFromRequest();
+        if (documentName != null && !documentName.isEmpty()) {
+            checkAndLoadExistingDeck();
+        }
+    }
+
+    public void checkAndLoadExistingDeck() {
+        if (userSession == null || !userSession.isLoggedIn()) return;
+        
+        loading = true;
+        try {
+            String namespacedDoc = userSession.getUserId() + "/" + documentName;
+            JSONArray jsonCards = ragService.generateFlashcards(namespacedDoc, "groq", 0, 0, 0, false);
+            if (jsonCards != null && jsonCards.length() > 0) {
+                parseCards(jsonCards);
+                deckPrepared = true;
+            }
+        } catch (Exception e) {
+            // Silently fail
+        } finally {
+            loading = false;
+        }
+    }
+
+    private void parseCards(JSONArray jsonCards) {
+        flashcards.clear();
+        int cardId = 1;
+        for (int i = 0; i < jsonCards.length(); i++) {
+            JSONObject obj = jsonCards.optJSONObject(i);
+            if (obj != null) {
+                String q = obj.optString("question", "No question");
+                String a = obj.optString("answer", "No answer");
+                String d = obj.optString("difficulty", "medium").toLowerCase();
+                flashcards.add(new Flashcard(cardId++, q, a, d));
+            }
+        }
     }
 
     public void generateFlashcards() {
+        if (userSession == null || !userSession.isLoggedIn()) return;
+
         loading = true;
         flashcards.clear();
 
         if (documentName == null || documentName.trim().isEmpty()) {
-            flashcards.add(new Flashcard(
-                    1,
-                    "No document selected",
-                    "Please open flashcards from a specific document in Dashboard.",
-                    "easy"
-            ));
+            flashcards.add(new Flashcard(1, "No document", "Please select a document.", "easy"));
             loading = false;
             return;
         }
 
         try {
-            if (ragService == null) {
-                flashcards.add(new Flashcard(1, "Service unavailable", "RagService not injected.", "hard"));
-                return;
-            }
-            
-            JSONArray jsonCards = ragService.generateFlashcards(documentName, "groq", numEasy, numMedium, numHard);
+            String namespacedDoc = userSession.getUserId() + "/" + documentName;
+            JSONArray jsonCards = ragService.generateFlashcards(namespacedDoc, "groq", 5, 5, 5, true); 
             if (jsonCards != null && jsonCards.length() > 0) {
-                int cardId = 1;
-                for (int i = 0; i < jsonCards.length(); i++) {
-                    JSONObject obj = jsonCards.optJSONObject(i);
-                    if (obj != null) {
-                        String q = obj.optString("question", "No question");
-                        String a = obj.optString("answer", "No answer");
-                        String d = obj.optString("difficulty", "medium").toLowerCase();
-                        flashcards.add(new Flashcard(cardId++, q, a, d));
-                    }
-                }
-            } else {
-                flashcards.add(new Flashcard(1, "No extractable content", "The backend returned an empty response.", "medium"));
+                parseCards(jsonCards);
+                deckPrepared = true;
             }
         } catch (Exception e) {
-            flashcards.add(new Flashcard(
-                    1,
-                    "Flashcard generation failed",
-                    "Could not generate flashcards for " + documentName + ": " + e.getMessage(),
-                    "hard"
-            ));
+            flashcards.add(new Flashcard(1, "Error", e.getMessage(), "hard"));
         } finally {
             loading = false;
+        }
+    }
+
+    public void onDocumentChange() {
+        if (documentName != null && !documentName.isEmpty()) {
+            checkAndLoadExistingDeck();
+        } else {
+            flashcards.clear();
+            deckPrepared = false;
         }
     }
 
@@ -141,6 +165,14 @@ public class FlashcardBean implements Serializable {
         this.configService = configService;
     }
 
+    public UserSession getUserSession() {
+        return userSession;
+    }
+
+    public void setUserSession(UserSession userSession) {
+        this.userSession = userSession;
+    }
+
     public DashboardBean getDashboardBean() {
         return dashboardBean;
     }
@@ -185,28 +217,29 @@ public class FlashcardBean implements Serializable {
         return flashcards.size();
     }
 
-    public int getNumEasy() {
-        return numEasy;
+    public List<Flashcard> getFilteredFlashcards() {
+        if ("ALL".equals(difficultyFilter)) {
+            return flashcards;
+        }
+        List<Flashcard> filtered = new ArrayList<>();
+        for (Flashcard f : flashcards) {
+            if (f.getDifficulty().equalsIgnoreCase(difficultyFilter)) {
+                filtered.add(f);
+            }
+        }
+        return filtered;
     }
 
-    public void setNumEasy(int numEasy) {
-        this.numEasy = numEasy;
+    public String getDifficultyFilter() {
+        return difficultyFilter;
     }
 
-    public int getNumMedium() {
-        return numMedium;
+    public void setDifficultyFilter(String difficultyFilter) {
+        this.difficultyFilter = difficultyFilter;
     }
 
-    public void setNumMedium(int numMedium) {
-        this.numMedium = numMedium;
-    }
-
-    public int getNumHard() {
-        return numHard;
-    }
-
-    public void setNumHard(int numHard) {
-        this.numHard = numHard;
+    public boolean isDeckPrepared() {
+        return deckPrepared;
     }
 
     // Inner Flashcard class

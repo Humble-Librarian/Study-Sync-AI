@@ -1,6 +1,7 @@
 package com.studysync.beans;
 
 import com.studysync.services.ConfigService;
+import com.studysync.services.DocumentService;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -26,9 +27,20 @@ public class UploadBean {
     @ManagedProperty(value = "#{dashboardBean}")
     private DashboardBean dashboardBean;
 
+    @ManagedProperty(value = "#{userSession}")
+    private UserSession userSession;
+
+    @ManagedProperty(value = "#{documentService}")
+    private DocumentService documentService;
+
     private Part file;
 
     public String upload() {
+        if (userSession == null || !userSession.isLoggedIn()) {
+            addGlobalMessage(FacesMessage.SEVERITY_ERROR, "Upload failed", "You must be logged in to upload files.");
+            return null;
+        }
+
         if (file == null || file.getSize() <= 0) {
             addGlobalMessage(FacesMessage.SEVERITY_ERROR, "Upload failed", "Please choose a PDF file.");
             return null;
@@ -55,13 +67,27 @@ public class UploadBean {
         }
 
         try {
-            Path pdfsPath = Paths.get(configService.resolveSharedDataDir(), "pdfs");
+            int userId = userSession.getUserId();
+            String sharedDir = configService.resolveSharedDataDir();
+            
+            // Define user-specific paths
+            Path pdfsPath = Paths.get(sharedDir, "pdfs", String.valueOf(userId));
+            Path indicesPath = Paths.get(sharedDir, "indices", String.valueOf(userId));
+            Path imagesPath = Paths.get(sharedDir, "images", String.valueOf(userId));
+            
+            // Ensure directories exist
             Files.createDirectories(pdfsPath);
+            Files.createDirectories(indicesPath);
+            Files.createDirectories(imagesPath);
 
             Path destination = pdfsPath.resolve(fileName);
             try (InputStream in = file.getInputStream()) {
                 Files.copy(in, destination, StandardCopyOption.REPLACE_EXISTING);
             }
+
+            // Register in DB
+            String subject = inferSubject(fileName);
+            documentService.addDocument(userId, fileName, subject);
 
             if (dashboardBean != null) {
                 dashboardBean.loadDocuments();
@@ -70,9 +96,19 @@ public class UploadBean {
             addGlobalMessage(FacesMessage.SEVERITY_INFO, "Upload complete", fileName + " uploaded successfully.");
         } catch (Exception e) {
             addGlobalMessage(FacesMessage.SEVERITY_ERROR, "Upload failed", e.getMessage());
+            e.printStackTrace();
         }
 
         return null; // stay on page
+    }
+
+    private String inferSubject(String fileName) {
+        String base = fileName.toLowerCase();
+        if (base.contains("math")) return "Mathematics";
+        if (base.contains("bio")) return "Biology";
+        if (base.contains("hist")) return "History";
+        if (base.contains("algo") || base.contains("code")) return "Computer Science";
+        return "General";
     }
 
     private String safeFileName(String submittedFileName) {
@@ -105,6 +141,22 @@ public class UploadBean {
 
     public void setDashboardBean(DashboardBean dashboardBean) {
         this.dashboardBean = dashboardBean;
+    }
+
+    public UserSession getUserSession() {
+        return userSession;
+    }
+
+    public void setUserSession(UserSession userSession) {
+        this.userSession = userSession;
+    }
+
+    public DocumentService getDocumentService() {
+        return documentService;
+    }
+
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
     }
 
     public Part getFile() {

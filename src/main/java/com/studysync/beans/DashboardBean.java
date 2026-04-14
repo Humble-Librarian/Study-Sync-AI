@@ -1,6 +1,7 @@
 package com.studysync.beans;
 
 import com.studysync.services.ConfigService;
+import com.studysync.services.DocumentService;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -42,6 +43,9 @@ public class DashboardBean implements Serializable {
     @ManagedProperty(value = "#{configService}")
     private ConfigService configService;
 
+    @ManagedProperty(value = "#{documentService}")
+    private DocumentService documentService;
+
     private List<Document> documents;
     private List<String> subjects = new ArrayList<>();
     private String selectedSubject;
@@ -54,130 +58,112 @@ public class DashboardBean implements Serializable {
     }
 
     public void loadDocuments() {
-        documents = new ArrayList<>();
-        subjects = new ArrayList<>();
-
-        if (configService == null || !configService.isSetupComplete()) {
-            setupMessage = "Shared folder or API keys are not configured yet. Complete setup before uploading files.";
+        if (userSession == null || !userSession.isLoggedIn()) {
+            documents = new ArrayList<>();
             return;
         }
 
-        setupMessage = "";
-        Path pdfsDir = Paths.get(configService.resolveSharedDataDir(), "pdfs");
-        Path indicesDir = Paths.get(configService.resolveSharedDataDir(), "indices");
-
         try {
-            Files.createDirectories(pdfsDir);
-            Files.createDirectories(indicesDir);
+            int userId = userSession.getUserId();
+            String sharedDir = configService.resolveSharedDataDir();
+            Path userPdfsDir = Paths.get(sharedDir, "pdfs", String.valueOf(userId));
+            Path userIndicesDir = Paths.get(sharedDir, "indices", String.valueOf(userId));
+            
+            Files.createDirectories(userPdfsDir);
+            Files.createDirectories(userIndicesDir);
 
-            List<Path> pdfFiles;
-            try (Stream<Path> stream = Files.list(pdfsDir)) {
-                pdfFiles = stream
-                        .filter(Files::isRegularFile)
-                        .filter(p -> p.getFileName().toString().toLowerCase().endsWith(".pdf"))
-                        .sorted(Comparator.comparing(this::lastModifiedSafe).reversed())
-                        .collect(Collectors.toList());
-            }
-
-            int i = 1;
+            // Fetch metadata from DB
+            List<DocumentService.DbDocument> dbDocs = documentService.getDocumentsForUser(userId);
+            
             Set<String> uniqueSubjects = new LinkedHashSet<>();
-            for (Path pdfPath : pdfFiles) {
-                String name = pdfPath.getFileName().toString();
-                String baseName = removeExtension(name);
-                Path indexPath = indicesDir.resolve(baseName + ".index.json");
-                boolean indexed = Files.exists(indexPath);
-                String subject = inferSubject(name);
-                uniqueSubjects.add(subject);
+            List<Document> loadedDocs = new ArrayList<>();
 
-                int pages = indexed ? countIndexedPages(indexPath) : 0;
-                String status = indexed ? "indexed" : "uploaded";
-                String date = DATE_FORMAT.format(lastModifiedSafe(pdfPath).toInstant().atZone(ZoneId.systemDefault()));
+            for (DocumentService.DbDocument dbDoc : dbDocs) {
+                String name = dbDoc.name;
+                Path pdfPath = userPdfsDir.resolve(name);
+                
+                if (Files.exists(pdfPath)) {
+                    // Enrich with file system data (page count from index)
+                    int pageCount = 0;
+                    String baseName = name.toLowerCase().endsWith(".pdf") ? name.substring(0, name.length() - 4) : name;
+                    Path indexPath = userIndicesDir.resolve(baseName + ".index.json");
+                    
+                    if (Files.exists(indexPath)) {
+                        String content = new String(Files.readAllBytes(indexPath), StandardCharsets.UTF_8);
+                        Matcher matcher = PAGE_PATTERN.matcher(content);
+                        while (matcher.find()) pageCount++;
+                    }
 
-                documents.add(new Document(i++, name, subject, status, pages, date));
+                    String formattedDate = dbDoc.uploadDate.toLocalDateTime()
+                            .atZone(ZoneId.systemDefault())
+                            .format(DATE_FORMAT);
+
+                    loadedDocs.add(new Document(
+                        dbDoc.id,
+                        name,
+                        dbDoc.subject,
+                        dbDoc.status,
+                        pageCount,
+                        formattedDate
+                    ));
+
+                    if (dbDoc.subject != null && !dbDoc.subject.trim().isEmpty()) {
+                        uniqueSubjects.add(dbDoc.subject.trim());
+                    }
+                }
             }
-            subjects = new ArrayList<>(uniqueSubjects);
+
+            this.documents = loadedDocs;
+            this.subjects = new ArrayList<>(uniqueSubjects);
+            this.setupMessage = null;
+
         } catch (Exception e) {
-            setupMessage = "Could not load documents: " + e.getMessage();
-        }
-    }
-
-    private FileTime lastModifiedSafe(Path path) {
-        try {
-            return Files.getLastModifiedTime(path);
-        } catch (Exception ignored) {
-            return FileTime.fromMillis(0);
-        }
-    }
-
-    private int countIndexedPages(Path indexPath) {
-        try {
-            String json = Files.readString(indexPath, StandardCharsets.UTF_8);
-            Matcher matcher = PAGE_PATTERN.matcher(json);
-            int count = 0;
-            while (matcher.find()) {
-                count++;
-            }
-            return count;
-        } catch (Exception ignored) {
-            return 0;
-        }
-    }
-
-    private String removeExtension(String fileName) {
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex <= 0) {
-            return fileName;
-        }
-        return fileName.substring(0, dotIndex);
-    }
-
-    private String inferSubject(String fileName) {
-        String base = removeExtension(fileName);
-        if (base.contains("_")) {
-            String candidate = base.substring(0, base.indexOf('_')).trim();
-            if (!candidate.isEmpty()) {
-                return candidate;
-            }
-        }
-        if (base.contains("-")) {
-            String candidate = base.substring(0, base.indexOf('-')).trim();
-            if (!candidate.isEmpty()) {
-                return candidate;
-            }
-        }
-        return "General";
-    }
-
-    public void onSubjectChange() {
-        if (userSession != null) {
-            userSession.setSelectedSubject(selectedSubject);
+            this.documents = new ArrayList<>();
+            this.setupMessage = "Error loading documents: " + e.getMessage();
         }
     }
 
     public void deleteDocument(String docName) {
-        if (configService == null || !configService.isSetupComplete()) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", "Setup is not complete.");
-            return;
-        }
-        if (docName == null || docName.trim().isEmpty()) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", "Invalid document name.");
-            return;
-        }
-
+        if (docName == null || userSession == null) return;
+        
         try {
-            String safeName = Paths.get(docName).getFileName().toString();
-            Path pdfPath = Paths.get(configService.getPdfsDir(), safeName);
-            Path indexPath = Paths.get(configService.getIndicesDir(), removeExtension(safeName) + ".index.json");
+            int userId = userSession.getUserId();
+            String sharedDir = configService.resolveSharedDataDir();
+            String safeName = docName.replaceAll("[^a-zA-Z0-9.-]", "_");
+            
+            System.out.println("[DashboardBean] Deleting document: " + docName + " for user: " + userId);
+            
+            // 1. Delete from DB
+            documentService.deleteDocument(userId, docName);
 
-            boolean pdfDeleted = Files.deleteIfExists(pdfPath);
-            Files.deleteIfExists(indexPath);
+            // 2. Physical Deletion
+            Path userSpace = Paths.get(String.valueOf(userId));
+            Path pdfPath = Paths.get(sharedDir, "pdfs").resolve(userSpace).resolve(docName);
+            
+            String baseNoExt = docName.toLowerCase().endsWith(".pdf") ? 
+                              docName.substring(0, docName.length() - 4) : docName;
+            
+            Path indexPath = Paths.get(sharedDir, "indices").resolve(userSpace).resolve(baseNoExt + ".index.json");
+            Path flashPath = Paths.get(sharedDir, "indices").resolve(userSpace).resolve(baseNoExt + ".flashcards.json");
+            Path imagesDir = Paths.get(sharedDir, "images").resolve(userSpace).resolve(baseNoExt);
 
-            if (pdfDeleted) {
-                addMessage(FacesMessage.SEVERITY_INFO, "Deleted", safeName + " was deleted.");
-            } else {
-                addMessage(FacesMessage.SEVERITY_WARN, "Not found", safeName + " does not exist.");
+            // Log and Delete
+            if (Files.deleteIfExists(pdfPath)) System.out.println("  - Deleted PDF: " + pdfPath);
+            if (Files.deleteIfExists(indexPath)) System.out.println("  - Deleted Index: " + indexPath);
+            if (Files.deleteIfExists(flashPath)) System.out.println("  - Deleted Flashcards Cache: " + flashPath);
+            
+            if (Files.exists(imagesDir)) {
+                System.out.println("  - Cleaning images directory: " + imagesDir);
+                try (Stream<Path> walk = Files.walk(imagesDir)) {
+                    walk.sorted(Comparator.reverseOrder()).forEach(p -> {
+                        try { Files.delete(p); } catch (Exception ignored) {}
+                    });
+                }
             }
+
+            addMessage(FacesMessage.SEVERITY_INFO, "Deleted", safeName + " and all associated data.");
         } catch (Exception e) {
+            System.err.println("[DashboardBean] Delete error: " + e.getMessage());
             addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", e.getMessage());
         }
 
@@ -186,23 +172,12 @@ public class DashboardBean implements Serializable {
 
     public void deleteSelectedDocument() {
         FacesContext context = FacesContext.getCurrentInstance();
-        if (context == null) {
-            addMessage(FacesMessage.SEVERITY_ERROR, "Delete failed", "No request context available.");
-            return;
-        }
+        if (context == null) return;
 
         String docName = safeTrim(pendingDeleteDocName);
         if (docName.isEmpty()) {
             Map<String, String> params = context.getExternalContext().getRequestParameterMap();
             docName = safeTrim(params.get("docNameToDelete"));
-            if (docName.isEmpty()) {
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    if (entry.getKey() != null && entry.getKey().endsWith("docNameToDelete")) {
-                        docName = safeTrim(entry.getValue());
-                        break;
-                    }
-                }
-            }
         }
 
         pendingDeleteDocName = null;
@@ -220,15 +195,9 @@ public class DashboardBean implements Serializable {
         return value == null ? "" : value.trim();
     }
 
-    // Getters and Setters
+    // Bean Getters & Setters
     public List<Document> getDocuments() {
-        loadDocuments();
-        if (selectedSubject == null || selectedSubject.trim().isEmpty()) {
-            return documents;
-        }
-        return documents.stream()
-                .filter(d -> selectedSubject.equals(d.getSubject()))
-                .collect(Collectors.toList());
+        return documents; // loadDocuments is called in init() and after mutations
     }
 
     public UserSession getUserSession() {
@@ -247,14 +216,19 @@ public class DashboardBean implements Serializable {
         this.configService = configService;
     }
 
+    public DocumentService getDocumentService() {
+        return documentService;
+    }
+
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
     public String getSetupMessage() {
         return setupMessage;
     }
 
     public List<String> getSubjects() {
-        if (subjects == null) {
-            subjects = new ArrayList<>();
-        }
         return subjects;
     }
 
@@ -278,7 +252,6 @@ public class DashboardBean implements Serializable {
         this.pendingDeleteDocName = pendingDeleteDocName;
     }
 
-    // Inner class for Document
     public static class Document implements Serializable {
         private int id;
         private String name;
@@ -296,32 +269,12 @@ public class DashboardBean implements Serializable {
             this.date = date;
         }
 
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getSubject() {
-            return subject;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public int getPages() {
-            return pages;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-        public boolean isReady() {
-            return "indexed".equals(status) || "uploaded".equals(status);
-        }
+        public int getId() { return id; }
+        public String getName() { return name; }
+        public String getSubject() { return subject; }
+        public String getStatus() { return status; }
+        public int getPages() { return pages; }
+        public String getDate() { return date; }
+        public boolean isReady() { return "uploaded".equals(status); }
     }
 }

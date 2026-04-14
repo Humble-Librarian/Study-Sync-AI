@@ -7,23 +7,38 @@
 
         <div class="flashcard-inner">
             <!-- Front Side -->
-            <div class="flashcard-front">
-                <span class="badge #{difficultyClass} flashcard-badge">
-                    #{difficulty}
-                </span>
+            <div class="flashcard-front" style="justify-content: flex-start; text-align: left; align-items: flex-start;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: var(--space-4);">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                        flashcard #{index != null ? index : ''}
+                    </span>
+                    <span class="flashcard-badge badge-#{difficultyClass}">
+                        #{difficulty}
+                    </span>
+                </div>
 
-                <p class="flashcard-label">QUESTION</p>
-                <h3 class="flashcard-question">#{question}</h3>
+                <h3 class="flashcard-question" style="font-size: 1.4rem; color: var(--text-main); margin-bottom: var(--space-4);">#{question}</h3>
 
-                <p class="flashcard-hint">Click or press Enter to flip</p>
+                <div style="flex: 1; width: 100%; display: flex; align-items: center; justify-content: center; opacity: 0.8;">
+                    <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--divider);">style</span>
+                </div>
+
+                <p class="flashcard-hint" style="width: 100%; text-align: center;">Click or press Enter to flip</p>
             </div>
 
             <!-- Back Side -->
-            <div class="flashcard-back">
-                <p class="flashcard-label">ANSWER</p>
-                <p class="flashcard-answer">#{answer}</p>
+            <div class="flashcard-back" style="justify-content: flex-start; text-align: left; align-items: flex-start;">
+                <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: var(--space-4);">
+                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                        The Answer
+                    </span>
+                </div>
+                
+                <div class="flashcard-answer" style="font-size: 1.1rem; color: var(--text-main); line-height: 1.6; flex: 1; overflow-y: auto;">
+                    #{answer}
+                </div>
 
-                <p class="flashcard-hint">Click to flip back</p>
+                <p class="flashcard-hint" style="width: 100%; text-align: center;">Click to flip back</p>
             </div>
         </div>
     </div>

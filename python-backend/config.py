@@ -32,4 +32,4 @@ def get_nim_api_key():
     props = _read_app_config()
     return props.get("nim_api_key") or os.getenv("NVIDIA_NIM_API_KEY")
 
-GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
