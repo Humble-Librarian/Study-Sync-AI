@@ -118,6 +118,11 @@
     cursor: pointer;
 }
 
+.chat-select option {
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
 .chat-number-input {
     width: 40px;
     text-align: center;
