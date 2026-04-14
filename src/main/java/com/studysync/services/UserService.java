@@ -34,6 +34,7 @@ public class UserService {
             dbPassword = "";
         }
         ensureTableExists();
+        System.out.println("[UserService] SQL Auth is ENABLED.");
     }
 
     // ── Public API ──────────────────────────────────────────────────────────────
@@ -76,6 +77,7 @@ public class UserService {
             }
         } catch (Exception e) {
             // log but don't expose internals
+            System.err.println("[UserService] Authentication error: " + e.getMessage());
         }
         return -1;
     }

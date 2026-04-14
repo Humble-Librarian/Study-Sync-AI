@@ -31,7 +31,6 @@ public class LoginBean {
             addError("Please enter your username and password.");
             return null;
         }
-
         int userId = userService.authenticate(username, password);
         if (userId > 0) {
             userSession.login(username.trim(), userId);
@@ -40,7 +39,6 @@ public class LoginBean {
             }
             return "/pages/dashboard.xhtml?faces-redirect=true";
         }
-
         addError("Invalid username or password.");
         return null;
     }
@@ -58,13 +56,11 @@ public class LoginBean {
             addError("Password must be at least 6 characters.");
             return null;
         }
-
         String error = userService.register(username, password);
         if (error != null) {
             addError(error);
             return null;
         }
-
         // Auto-login after successful registration
         int userId = userService.authenticate(username, password);
         userSession.login(username.trim(), userId);

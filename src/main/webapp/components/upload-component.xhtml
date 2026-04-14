@@ -1,90 +1,83 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <div class="upload-area">
+    <div class="upload-area" id="uploadZone" ondragover="event.preventDefault(); this.classList.add('hover');"
+         ondragleave="this.classList.remove('hover');" ondrop="handleDrop(event);">
 
         <h:form id="uploadForm" enctype="multipart/form-data">
             <div class="upload-content">
                 <!-- Upload Icon -->
                 <div class="upload-icon">
-                    <span style="font-size: 3rem; line-height: 1;">↑</span>
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary-main);">upload_file</span>
                 </div>
 
-                <h5 class="fw-bold mb-2">Upload PDF</h5>
-                <p class="text-muted text-sm mb-4">Click browse, select a PDF, then upload</p>
+                <h5 style="font-weight: 600; margin-bottom: 8px;">Upload PDF</h5>
+                <p class="text-muted text-sm" style="margin-bottom: var(--space-4);">Click browse or drag &amp; drop a PDF here</p>
 
                 <h:inputFile id="fileInput" value="#{uploadBean.file}" styleClass="file-input-hidden"
                     onchange="onFileSelected(this)" accept=".pdf,application/pdf" />
 
-                <button type="button" class="btn browse-btn" onclick="triggerFilePicker()">
+                <button type="button" class="browse-btn btn" onclick="triggerFilePicker()">
                     Browse Files
                 </button>
 
-                <div class="selected-file mt-4 p-4" id="selectedFileCard" style="display: none;">
-                    <p class="fw-bold mb-1" id="fileName"></p>
+                <div class="selected-file" id="selectedFileCard" style="display: none; margin-top: var(--space-4);">
+                    <p style="font-weight: 600; margin: 0 0 4px;" id="fileName"></p>
                     <small class="text-muted" id="fileSize"></small>
                 </div>
 
-                <p class="text-muted text-sm mt-2">Max file size: 20MB</p>
+                <p class="text-muted text-sm" style="margin-top: var(--space-2);">Max file size: 20MB</p>
 
                 <!-- Upload Button -->
                 <h:commandButton id="uploadBtn" value="Upload Document" action="#{uploadBean.upload}"
-                    styleClass="btn btn-primary mt-4 upload-submit" style="display: none;" />
+                    styleClass="btn btn-primary upload-submit" style="display: none; margin-top: var(--space-4); border-radius: var(--radius-full);" />
 
-                <!-- Success/Error Messages -->
-                <h:messages globalOnly="true" styleClass="alert mt-4" />
+                <!-- Messages -->
+                <h:messages globalOnly="true" styleClass="alert" style="margin-top: var(--space-4);" />
             </div>
         </h:form>
     </div>
 
     <style>
         .upload-area {
-            border: 2px dashed var(--border-default);
+            border: 1px dashed var(--border-strong);
             border-radius: var(--radius-lg);
             padding: var(--space-8);
             text-align: center;
-            background-color: var(--bg-secondary);
-            transition: all 0.2s;
+            background-color: var(--bg-elevated);
+            transition: border-color 0.2s, background-color 0.2s;
             cursor: pointer;
         }
-
-        .upload-icon {
-            color: var(--primary);
-            margin-bottom: var(--space-4);
+        .upload-area.hover, .upload-area:hover {
+            border-color: var(--primary-main);
+            background-color: var(--bg-hover);
         }
-
         .file-input-hidden {
             position: absolute;
             left: -9999px;
-            width: 1px;
-            height: 1px;
+            width: 1px; height: 1px;
             opacity: 0;
         }
-
         .browse-btn {
-            min-width: 220px;
-            border: 1px solid var(--border-accent);
-            background: linear-gradient(135deg, rgba(0, 245, 212, 0.18) 0%, rgba(0, 180, 160, 0.18) 100%);
-            color: var(--text-bright);
-            box-shadow: 0 8px 30px rgba(0, 245, 212, 0.2);
+            min-width: 180px;
+            border: 1px solid var(--border-strong);
+            background: var(--bg-surface);
+            color: var(--text-main);
+            border-radius: var(--radius-full);
         }
-
         .browse-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 35px rgba(0, 245, 212, 0.3);
+            background: var(--primary-main);
+            color: var(--primary-text);
+            border-color: var(--primary-main);
         }
-
         .selected-file {
             max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: var(--space-4) auto 0;
             border-radius: var(--radius-md);
+            padding: var(--space-3);
             border: 1px solid var(--border-light);
-            background-color: rgba(255, 255, 255, 0.03);
+            background-color: var(--bg-surface);
         }
-
-        .upload-submit {
-            min-width: 220px;
-        }
+        .upload-submit { min-width: 200px; }
     </style>
 </ui:composition>

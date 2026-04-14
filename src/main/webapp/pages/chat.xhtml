@@ -9,13 +9,32 @@
 
     <ui:define name="title">Chat - Study-Sync AI</ui:define>
 
+    <ui:define name="header">
+        <header class="header">
+            <div class="header-left">
+                <h:outputLink value="#" onclick="window.history.back(); return false;" styleClass="btn-back">
+                    <span class="material-symbols-outlined">arrow_back</span> Back
+                </h:outputLink>
+                <h1 class="page-title">Greetings, #{userSession.username}</h1>
+            </div>
+            <div class="header-right">
+                <h:form rendered="#{userSession.loggedIn}">
+                    <h:commandButton value="Logout" action="#{loginBean.logout}" styleClass="btn btn-primary" />
+                </h:form>
+                <button class="theme-toggle" onclick="toggleTheme();" title="Toggle Theme">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+            </div>
+        </header>
+    </ui:define>
+
     <ui:define name="content">
-        <div class="chat-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); max-width: 1600px; margin: 0 auto; height: 82vh;">
+        <div style="display: flex; gap: var(--space-4); height: calc(100vh - 120px);">
             
             <!-- Left Panel (PDF Preview) -->
-            <div class="card card-glass pdf-panel" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; border-radius: var(--radius-lg);">
-                <div style="background: rgba(30, 30, 50, 0.6); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                    <span class="fw-bold" style="color: var(--text-primary);">Document Preview</span>
+            <div class="card" style="flex: 0 0 auto; width: 45%; min-width: 200px; max-width: 75%; resize: horizontal; overflow: hidden; padding: 0; display: flex; flex-direction: column; border-radius: var(--radius-lg); height: 100%; box-shadow: 2px 0 10px rgba(0,0,0,0.05);">
+                <div style="background: var(--bg-surface); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                    <span style="font-weight: 600; color: var(--text-main);">Document Preview <small class="text-muted" style="font-weight: normal; margin-left: 8px;">(drag edge to resize)</small></span>
                 </div>
                 <h:panelGroup rendered="#{not empty chatBean.docName}" layout="block" style="flex: 1; background: #fff;">
                     <iframe src="#{request.contextPath}/resources/pdfjs/web/viewer.html?file=#{request.contextPath}/local-pdf/#{chatBean.encodedDocName}" width="100%" height="100%" style="border: none;"></iframe>
@@ -26,73 +45,109 @@
             </div>
 
             <!-- Right Panel (Chat Interaction) -->
-            <div class="card card-glass chat-panel" style="overflow-y: auto; display: flex; flex-direction: column;">
-                <div class="d-flex justify-between align-center mb-4">
-                    <h:link outcome="/pages/dashboard.xhtml" styleClass="btn btn-secondary">Back</h:link>
-                    <h2 class="text-xl fw-bold" style="margin: 0; text-align: right; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">#{empty chatBean.docName ? 'Document Chat' : chatBean.docName}</h2>
-                </div>
-
-                <h:form id="chatForm">
-                    <h:inputHidden id="docNameHidden" value="#{chatBean.docName}" />
-
-                    <h:panelGroup rendered="#{not empty chatBean.errorMessage}">
-                        <div class="alert alert-danger mb-4">#{chatBean.errorMessage}</div>
-                    </h:panelGroup>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
-                        <div class="form-group">
-                            <h:outputLabel for="llmChoice" value="Model Provider" styleClass="form-label"/>
-                            <h:selectOneMenu id="llmChoice" value="#{chatBean.llmChoice}" styleClass="form-control">
-                                <f:selectItem itemLabel="Groq (Llama 3.3)" itemValue="groq"/>
-                                <f:selectItem itemLabel="NVIDIA NIM" itemValue="nim"/>
-                            </h:selectOneMenu>
-                        </div>
-
-                        <div class="form-group">
-                            <h:outputLabel for="topK" value="Context Depth" styleClass="form-label"/>
-                            <h:inputText id="topK" value="#{chatBean.topK}" styleClass="form-control"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <h:outputLabel for="question" value="Ask a Question" styleClass="form-label"/>
-                        <h:inputTextarea id="question" value="#{chatBean.userQuery}" styleClass="form-control" rows="3"
-                                         placeholder="Type your question about this document..."/>
-                    </div>
-
-                    <div class="d-flex justify-end mb-4">
-                        <h:commandButton value="Ask AI" action="#{chatBean.submitQuery}" styleClass="btn btn-primary w-100"/>
-                    </div>
-                </h:form>
-
-                <h:panelGroup rendered="#{not empty chatBean.answer}">
-                    <div class="card" style="margin-bottom: var(--space-4); background: linear-gradient(135deg, rgba(82, 53, 232, 0.1) 0%, rgba(94, 219, 211, 0.1) 100%); border-color: var(--accent);">
-                        <h3 class="fw-bold mb-3" style="color: var(--accent);">AI Answer</h3>
-                        <p style="white-space: pre-wrap; margin: 0; line-height: 1.6;">#{chatBean.answer}</p>
-                    </div>
-                </h:panelGroup>
-
-                <h:panelGroup rendered="#{chatBean.showSources}">
-                    <div class="card" style="background: rgba(30, 30, 50, 0.4);">
-                        <h3 class="fw-bold mb-3">Retrieved Context</h3>
+            <div class="chat-container card" style="flex: 1; min-width: 300px; position: relative; display: flex; flex-direction: column; height: 100%; border-radius: var(--radius-lg); padding: 0; overflow: hidden;">
+                <!-- PDF Thumbnail Strip (from source pages/images) -->
+                <h:panelGroup rendered="#{chatBean.showSources}" styleClass="chat-previews" style="padding: var(--space-2); background: var(--bg-elevated); border-bottom: 1px solid var(--border-light);">
+                    <div style="display: flex; gap: var(--space-2); overflow-x: auto;">
                         <ui:repeat value="#{chatBean.sourcePages}" var="src">
-                            <div class="mb-3" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-light);">
-                                <div class="d-flex justify-between align-center mb-1">
-                                    <strong style="color: var(--accent-light);">Page #{src.page}</strong>
-                                    <span class="badge badge-info" style="font-size: 0.75rem;">Score: #{src.score}</span>
-                                </div>
-                                <p style="white-space: pre-wrap; margin: 0; font-size: 0.9rem; color: var(--text-secondary);">#{src.text}</p>
-                                <h:panelGroup rendered="#{not empty src.images}">
-                                    <div style="margin-top: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2);">
-                                        <ui:repeat value="#{src.images}" var="imgPath">
-                                            <img src="http://localhost:5000/#{imgPath}" alt="Diagram from PDF" style="max-width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border-accent); box-shadow: var(--shadow-sm);" />
-                                        </ui:repeat>
-                                    </div>
-                                </h:panelGroup>
-                            </div>
+                            <h:panelGroup rendered="#{not empty src.images}">
+                                <ui:repeat value="#{src.images}" var="imgPath">
+                                    <img src="http://localhost:5000/#{imgPath}"
+                                         alt="Page #{src.page}"
+                                         style="height: 80px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); object-fit: cover; cursor: pointer;" />
+                                </ui:repeat>
+                            </h:panelGroup>
                         </ui:repeat>
                     </div>
                 </h:panelGroup>
+
+                <!-- Chat Messages -->
+                <div class="chat-messages" id="chatMessages" style="flex: 1; overflow-y: auto; padding: var(--space-4); padding-bottom: 80px;">
+                    <!-- User question bubble -->
+                    <h:panelGroup rendered="#{not empty chatBean.userQuery}">
+                        <div style="display: flex; justify-content: flex-end;">
+                            <div class="chat-bubble-user" style="background: var(--primary-main); color: var(--primary-text); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border-bottom-right-radius: var(--radius-sm); max-width: 80%; margin-bottom: var(--space-4);">
+                                Question: <em>#{chatBean.userQuery}</em>
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Error -->
+                    <h:panelGroup rendered="#{not empty chatBean.errorMessage}">
+                        <div class="alert alert-danger">#{chatBean.errorMessage}</div>
+                    </h:panelGroup>
+
+                    <!-- Main Answer -->
+                    <h:panelGroup rendered="#{not empty chatBean.answer}">
+                        <div class="chat-bubble" style="background: var(--bg-elevated); border: 1px solid var(--border-light); padding: var(--space-4); border-radius: var(--radius-lg); border-bottom-left-radius: var(--radius-sm); margin-bottom: var(--space-4);">
+                            <span style="font-weight: 600; display: block; margin-bottom: var(--space-2); color: var(--text-main);">AI Answer</span>
+                            <p style="margin: 0; line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap; color: var(--text-main);">#{chatBean.answer}</p>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Source context chunks -->
+                    <h:panelGroup rendered="#{chatBean.showSources}">
+                        <div style="background: var(--bg-surface); border: 1px solid var(--border-light); padding: var(--space-4); border-radius: var(--radius-lg); margin-bottom: var(--space-4);">
+                            <h4 style="margin: 0 0 var(--space-3) 0; font-size: 0.95rem; color: var(--text-muted);">Retrieved Context</h4>
+                            <ui:repeat value="#{chatBean.sourcePages}" var="src" varStatus="status">
+                                <div style="margin-bottom: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-light);">
+                                    <span style="font-weight: 600; display: block; margin-bottom: 4px; color: var(--text-main);">
+                                        Page #{src.page} <span class="badge badge-info" style="margin-left: 8px; font-size: 0.7em;">Score: #{src.score}</span>
+                                    </span>
+                                    <p style="margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--text-muted);">#{src.text}</p>
+                                </div>
+                            </ui:repeat>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Empty Placeholder -->
+                    <h:panelGroup rendered="#{empty chatBean.answer and empty chatBean.errorMessage}">
+                        <div class="text-center" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; opacity: 0.4;">
+                            <span class="material-symbols-outlined" style="font-size: 3.5rem;">chat</span>
+                            <p class="text-muted text-sm" style="margin-top: var(--space-2);">Ask a question about your document below</p>
+                        </div>
+                    </h:panelGroup>
+                </div>
+
+                <!-- Floating Bottom Input Bar -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: var(--space-4); background: linear-gradient(to top, var(--bg-surface) 80%, transparent); display: flex; flex-direction: column; justify-content: center;">
+                    <h:form id="chatForm" styleClass="chat-input-bar" style="margin: 0; position: static;">
+                        <h:inputHidden id="docNameHidden" value="#{chatBean.docName}" />
+
+                        <div class="chat-input-content" style="margin: 0 auto; box-shadow: 0 8px 30px rgba(0,0,0,0.15); display: flex; flex-wrap: wrap; width: 100%; box-sizing: border-box;">
+                            <!-- File icon -->
+                            <div class="chat-input-group" title="Document: #{chatBean.docName}">
+                                <span class="material-symbols-outlined icon-muted">description</span>
+                            </div>
+
+                            <!-- Divider -->
+                            <div class="chat-divider"></div>
+
+                            <!-- Model Selector -->
+                            <div class="chat-input-group">
+                                <h:selectOneMenu id="llmChoice" value="#{chatBean.llmChoice}" styleClass="chat-select" style="min-width: unset; max-width: 140px; text-overflow: ellipsis; overflow: hidden;">
+                                    <f:selectItem itemLabel="Groq (Llama 3)" itemValue="groq" />
+                                    <f:selectItem itemLabel="NVIDIA NIM" itemValue="nim" />
+                                </h:selectOneMenu>
+                            </div>
+
+                            <!-- Context depth -->
+                            <div class="chat-input-group" style="display: none;">
+                                <!-- Hid context depth to save space, retaining binding -->
+                                <h:inputText id="topK" value="#{chatBean.topK}" styleClass="chat-number-input" />
+                            </div>
+
+                            <!-- Question input -->
+                            <h:inputText id="question" value="#{chatBean.userQuery}" styleClass="chat-text-input" placeholder="Ask about #{chatBean.docName}..." />
+
+                            <!-- Send Button -->
+                            <h:commandLink action="#{chatBean.submitQuery}" styleClass="chat-send-btn" title="Send">
+                                <span class="material-symbols-outlined">send</span>
+                            </h:commandLink>
+                        </div>
+                    </h:form>
+                </div>
+
             </div>
         </div>
     </ui:define>

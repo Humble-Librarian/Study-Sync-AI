@@ -5,59 +5,53 @@
 <ui:composition template="/WEB-INF/templates/layout.xhtml">
     <ui:define name="title">Login - Study-Sync AI</ui:define>
 
+    <ui:define name="sidebar">
+        <!-- Hide sidebar on login page -->
+    </ui:define>
+
     <ui:define name="header">
-        <!-- Empty header for login page -->
+        <!-- Hide header on login page -->
     </ui:define>
 
     <ui:define name="content">
-        <div class="d-flex align-center justify-center" style="min-height: 80vh;">
-            <div class="card card-glass animate-in" style="width: 100%; max-width: 420px;">
-                <!-- Logo & Tagline -->
-                <div class="text-center mb-4">
-                    <div class="logo justify-center" style="font-size: 2rem; margin-bottom: var(--space-3);">
-                        Study-Sync AI
-                    </div>
-                    <p class="text-muted">Learn Smarter with AI</p>
+        <div class="d-flex align-center justify-center" style="min-height: 100vh; padding: var(--space-4);">
+            <div class="card animate-in" style="width: 100%; max-width: 380px; padding: var(--space-6) var(--space-8);">
+                
+                <div class="text-center mb-6" style="margin-bottom: var(--space-6);">
+                    <h1 style="font-size: 1.75rem; margin: 0; font-weight: 600;">Study-Sync AI</h1>
                 </div>
 
-                <!-- Login Form -->
                 <h:form id="loginForm">
-                    <h:messages globalOnly="true" styleClass="alert alert-danger mb-4" />
+                    <h:messages globalOnly="true" styleClass="alert alert-danger" />
 
                     <div class="form-group animate-in delay-1">
-                        <h:outputLabel for="username" value="Username" styleClass="form-label" />
                         <h:inputText id="username" value="#{loginBean.username}" styleClass="form-control"
-                            placeholder="Enter your username" required="true" requiredMessage="Username is required" />
-                        <h:message for="username" styleClass="text-danger text-sm" />
+                            placeholder="Username" required="true" requiredMessage="Username is required" />
+                        <h:message for="username" styleClass="text-danger text-sm mt-1" style="display:block;" />
                     </div>
 
                     <div class="form-group animate-in delay-2">
-                        <h:outputLabel for="password" value="Password" styleClass="form-label" />
                         <h:inputSecret id="password" value="#{loginBean.password}" styleClass="form-control"
-                            placeholder="Enter your password" required="true" requiredMessage="Password is required" />
-                        <h:message for="password" styleClass="text-danger text-sm" />
+                            placeholder="Password" required="true" requiredMessage="Password is required" />
+                        <h:message for="password" styleClass="text-danger text-sm mt-1" style="display:block;" />
                     </div>
 
-                    <div class="animate-in delay-3">
-                        <h:commandButton value="⚡ Login" action="#{loginBean.login}"
-                            styleClass="btn btn-primary btn-lg w-100" />
+                    <div class="animate-in delay-3" style="margin-top: var(--space-4);">
+                        <h:commandButton value="Login" action="#{loginBean.login}"
+                            styleClass="btn btn-primary w-100 btn-lg" style="border-radius: var(--radius-full);" />
                     </div>
                 </h:form>
 
-                <!-- Footer Link -->
-                <div class="text-center mt-4 animate-in delay-4">
-                    <span class="text-muted text-sm">Don't have an account? </span>
+                <div class="text-center animate-in delay-4" style="margin-top: var(--space-6);">
+                    <span class="text-muted text-sm">Don't have account? </span>
                     <h:link outcome="/pages/register.xhtml" styleClass="text-sm">Register here</h:link>
                 </div>
-
-                <!-- Demo Hint -->
-
             </div>
         </div>
     </ui:define>
 
     <ui:define name="footer">
-        <!-- Empty footer for login page -->
+        <!-- Hide footer on login page -->
     </ui:define>
 </ui:composition>
 
