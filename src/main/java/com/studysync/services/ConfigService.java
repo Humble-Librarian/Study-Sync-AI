@@ -179,7 +179,7 @@ public class ConfigService implements Serializable {
         }
     }
 
-    private Connection openConnection() throws Exception {
+    public Connection openConnection() throws Exception {
         String dbUrl = getDbUrl();
         String dbUser = getDbUser();
         String dbPassword = getDbPassword();
