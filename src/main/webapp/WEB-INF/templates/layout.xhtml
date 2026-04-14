@@ -42,9 +42,24 @@
                     <span class="material-symbols-outlined">settings</span>
                 </h:link>
 
-                <div class="sidebar-bottom">
+                <div class="sidebar-bottom profile-menu">
                     <div class="user-avatar" title="#{userSession.username}">
                         <span class="material-symbols-outlined" style="color: var(--text-muted)">person</span>
+                    </div>
+                    <div class="profile-dropdown">
+                        <div class="px-3 py-2 text-sm text-muted fw-bold" style="padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--border-light); margin-bottom: var(--space-1);">
+                            #{not empty userSession.username ? userSession.username : 'User'}
+                        </div>
+                        <h:link outcome="/pages/setup.xhtml" styleClass="dropdown-item">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">settings</span>
+                            Settings
+                        </h:link>
+                        <h:form style="margin: 0; padding: 0;">
+                            <h:commandLink action="#{loginBean.logout}" styleClass="dropdown-item text-danger">
+                                <span class="material-symbols-outlined" style="font-size: 1.2rem;">logout</span>
+                                Logout
+                            </h:commandLink>
+                        </h:form>
                     </div>
                 </div>
             </aside>

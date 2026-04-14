@@ -26,20 +26,23 @@
                     <h:messages globalOnly="true" styleClass="alert alert-danger" />
 
                     <div class="form-group animate-in delay-1">
+                        <h:outputLabel for="username" value="Username" styleClass="form-label" style="text-align: left;" />
                         <h:inputText id="username" value="#{loginBean.username}" styleClass="form-control"
-                            placeholder="Username" required="true" requiredMessage="Username is required" />
+                            placeholder="Choose a username" required="true" requiredMessage="Username is required" />
                         <h:message for="username" styleClass="text-danger text-sm" style="display:block; margin-top: 4px;" />
                     </div>
 
                     <div class="form-group animate-in delay-2">
+                        <h:outputLabel for="password" value="Password" styleClass="form-label" style="text-align: left;" />
                         <h:inputSecret id="password" value="#{loginBean.password}" styleClass="form-control"
-                            placeholder="Password (min 6 chars)" required="true" requiredMessage="Password is required" />
+                            placeholder="Create a password (min 6 chars)" required="true" requiredMessage="Password is required" />
                         <h:message for="password" styleClass="text-danger text-sm" style="display:block; margin-top: 4px;" />
                     </div>
 
                     <div class="form-group animate-in delay-3">
+                        <h:outputLabel for="confirmPassword" value="Confirm Password" styleClass="form-label" style="text-align: left;" />
                         <h:inputSecret id="confirmPassword" value="#{loginBean.confirmPassword}" styleClass="form-control"
-                            placeholder="Confirm Password" required="true" requiredMessage="Please confirm your password" />
+                            placeholder="Confirm your password" required="true" requiredMessage="Please confirm your password" />
                         <h:message for="confirmPassword" styleClass="text-danger text-sm" style="display:block; margin-top: 4px;" />
                     </div>
 

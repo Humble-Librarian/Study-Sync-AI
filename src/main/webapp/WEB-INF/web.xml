@@ -56,7 +56,7 @@
     </servlet-mapping>
     
     <welcome-file-list>
-        <welcome-file>pages/dashboard.xhtml</welcome-file>
+        <welcome-file>pages/login.xhtml</welcome-file>
     </welcome-file-list>
     
     <!-- JSF Development Mode -->
